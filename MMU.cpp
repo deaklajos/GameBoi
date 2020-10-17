@@ -1,25 +1,26 @@
 #include "MMU.h"
 
-#include <cassert>
+#include "Exceptions.h"
+
 
 uint8_t MMU::read_8(uint16_t address) const
 {
-	assert(true, "Unimplemented");
+	UNIMPLEMENTED();
 	return uint8_t();
 }
 
 void MMU::write_8(uint16_t address, uint8_t data)
 {
-	assert(true, "Unimplemented");
+	UNIMPLEMENTED();
 }
 
 uint16_t MMU::read_16(uint16_t address) const
 {
-	assert(true, "Unimplemented");
+	UNIMPLEMENTED();
 	return uint16_t();
 }
 
 void MMU::write_16(uint16_t address, uint16_t data)
 {
-	assert(true, "Unimplemented");
+	UNIMPLEMENTED();
 }
