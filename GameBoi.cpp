@@ -5,6 +5,10 @@
 
 int main()
 {
-	UNIMPLEMENTED();
-	std::cout << "Hello World!";
+	Z80 cpu;
+
+	for (;;)
+	{
+		cpu.Clock();
+	}
 }

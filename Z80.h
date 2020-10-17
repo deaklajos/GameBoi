@@ -6,11 +6,13 @@
 class Z80
 {
 public:
+	Z80();
+	~Z80();
+
 	void Reset();
 	void Clock();
 
-private:
-	int Fetch();
+	uint64_t cycles;
 
 private:
 	MMU memory;
