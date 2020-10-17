@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <array>
 #include "MMU.h"
 
 class Z80
@@ -15,7 +16,27 @@ public:
 	uint64_t cycles;
 
 private:
+	void LD_SP_d16(uint16_t data);
+	void unimplemented_op0(void);
+	void unimplemented_op1(uint8_t);
+	void unimplemented_op2(uint16_t);
+
+private:
 	MMU memory;
+
+	struct Instruction {
+		const char* name;
+		uint8_t cycleCount;
+		uint8_t instructionLength;
+		union
+		{
+			void (Z80::*op0)(void);
+			void (Z80::*op1)(uint8_t);
+			void (Z80::*op2)(uint16_t);
+		};
+	};
+
+	std::array<Instruction, 256> instructions;
 
 	struct Registers {
 		struct {
