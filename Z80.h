@@ -3,11 +3,6 @@
 #include <cstdint>
 #include "MMU.h"
 
-struct Instruction
-{
-
-};
-
 class Z80
 {
 public:
@@ -15,7 +10,7 @@ public:
 	void Clock();
 
 private:
-	Instruction Fetch();
+	int Fetch();
 
 private:
 	MMU memory;
