@@ -11,8 +11,5 @@ public:
 
 	uint16_t read_16(uint16_t address) const;
 	void write_16(uint16_t address, uint16_t data);
-
-private:
-	std::array<uint8_t, 0xFFFF > memory;
 };
 

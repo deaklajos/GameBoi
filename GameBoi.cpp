@@ -1,9 +1,10 @@
 #include <iostream>
 
 #include "Z80.h"
+#include "Exceptions.h"
 
 int main()
 {
-
-	std::cout << "Hello World!" << "\n";
+	UNIMPLEMENTED();
+	std::cout << "Hello World!";
 }

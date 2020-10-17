@@ -3,7 +3,7 @@
 #include <stdexcept>
 
 #define UNIMPLEMENTED() throw std::logic_error("Unimplemented!")
-//void Unimplemented()
-//{
-//	throw std::logic_error("Unimplemented!");
-//}
+
+//#include <cassert>
+//
+//#define DEBUG_BREAK() assert(!"A is not equal to B")
