@@ -1,9 +1,14 @@
 #include <iostream>
 
 #include "Z80.h"
+#include "Exceptions.h"
 
 int main()
 {
+	Z80 cpu;
 
-	std::cout << "Hello World!" << "\n";
+	for (;;)
+	{
+		cpu.Clock();
+	}
 }
