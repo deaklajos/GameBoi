@@ -2,8 +2,8 @@
 
 #include "Exceptions.h"
 
-// bios code from: http://imrannazar.com/content/files/jsgb.mmu.js
-static uint8_t bios[] = {
+// boot ROM  from: https://gbdev.gg8.se/wiki/articles/Gameboy_Bootstrap_ROM
+static uint8_t boot_ROM[] = {
 	0x31, 0xFE, 0xFF, 0xAF, 0x21, 0xFF, 0x9F, 0x32, 0xCB, 0x7C, 0x20, 0xFB, 0x21, 0x26, 0xFF, 0x0E,
 	0x11, 0x3E, 0x80, 0x32, 0xE2, 0x0C, 0x3E, 0xF3, 0xE2, 0x32, 0x3E, 0x77, 0x77, 0x3E, 0xFC, 0xE0,
 	0x47, 0x11, 0x04, 0x01, 0x21, 0x10, 0x80, 0x1A, 0xCD, 0x95, 0x00, 0xCD, 0x96, 0x00, 0x13, 0x7B,
@@ -25,7 +25,7 @@ static uint8_t bios[] = {
 uint8_t MMU::read_8(uint16_t address) const
 {
 	if (address < 256)
-		return bios[address];
+		return boot_ROM[address];
 
 	UNIMPLEMENTED();
 	return uint8_t();
@@ -33,7 +33,8 @@ uint8_t MMU::read_8(uint16_t address) const
 
 void MMU::write_8(uint16_t address, uint8_t data)
 {
-	UNIMPLEMENTED();
+	// just trying out stuff
+	//UNIMPLEMENTED();
 }
 
 uint16_t MMU::read_16(uint16_t address) const

@@ -17,6 +17,13 @@ public:
 
 private:
 	void LD_SP_d16(uint16_t data);
+	void LD_BC_d16(uint16_t data);
+	void LD_DE_d16(uint16_t data);
+	void LD_HL_d16(uint16_t data);
+	void LDD_HLa_A(void);
+	void LDI_HLa_A(void);
+	void PREFIX(uint8_t instuction);
+	void XOR_A(void);
 	void unimplemented_op0(void);
 	void unimplemented_op1(uint8_t);
 	void unimplemented_op2(uint16_t);
