@@ -22,10 +22,25 @@ static uint8_t boot_ROM[] = {
 	0xF5, 0x06, 0x19, 0x78, 0x86, 0x23, 0x05, 0x20, 0xFB, 0x86, 0x20, 0xFE, 0x3E, 0x01, 0xE0, 0x50
 };
 
+MMU::MMU(const uint16_t& pc) :pc(pc)
+{
+}
+
+MMU::~MMU()
+{
+}
+
 uint8_t MMU::read_8(uint16_t address) const
 {
-	if (address < 256)
-		return boot_ROM[address];
+	if (isBootROMRunning)
+	{
+		if (address < 256)
+			return boot_ROM[address];
+		else if (pc == 256) {
+			throw std::logic_error("YEEEHAAAA!");
+			isBootROMRunning = false;
+		}
+	}
 
 	UNIMPLEMENTED();
 	return uint8_t();
