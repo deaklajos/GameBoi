@@ -58,9 +58,17 @@ private:
 	void LD_E_d8(uint8_t data);
 	void LD_L_d8(uint8_t data);
 	void LD_A_d8(uint8_t data);
+	void CALL_NZ(uint16_t address);
+	void CALL_Z(uint16_t address);
+	void CALL(uint16_t address);
+	void CALL_NC(uint16_t address);
+	void CALL_C(uint16_t address);
 	void unimplemented_op0(void);
 	void unimplemented_op1(uint8_t);
 	void unimplemented_op2(uint16_t);
+
+	uint16_t pop_16(void);
+	void push_16(uint16_t data);
 
 private:
 	MMU memory;

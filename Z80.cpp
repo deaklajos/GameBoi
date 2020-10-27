@@ -325,6 +325,70 @@ void Z80::LD_A_d8(uint8_t data)
 	registers.a = data;
 }
 
+void Z80::CALL_NZ(uint16_t address)
+{
+	if (registers.f & ZERO_FLAG)
+		cycles += 12;
+	else
+	{
+		CALL(address);
+		cycles += 24;
+	}
+}
+
+void Z80::CALL_Z(uint16_t address)
+{
+	if (registers.f & ZERO_FLAG)
+	{
+		CALL(address);
+		cycles += 24;
+	}
+	else
+		cycles += 12;
+}
+
+void Z80::CALL(uint16_t address)
+{
+	push_16(registers.pc);
+	registers.pc = address;
+}
+
+void Z80::CALL_NC(uint16_t address)
+{
+	if (registers.f & CARRY_FLAG)
+		cycles += 12;
+	else
+	{
+		CALL(address);
+		cycles += 24;
+	}
+}
+
+void Z80::CALL_C(uint16_t address)
+{
+	if (registers.f & CARRY_FLAG)
+	{
+		CALL(address);
+		cycles += 24;
+	}
+	else
+		cycles += 12;
+}
+
+uint16_t Z80::pop_16(void)
+{
+	uint16_t value = memory.read_16(registers.sp);
+	registers.sp += 2;
+
+	return value;
+}
+
+void Z80::push_16(uint16_t data)
+{
+	registers.sp -= 2;
+	memory.write_16(registers.sp, data);
+}
+
 // TODO CLEAN UP INSTRUCTION TIMING AND USE T CYCLES!!!
 // instruction table is a modified version of: https://cturt.github.io/cinoop.html
 Z80::Z80() : instructions({ {
@@ -524,7 +588,7 @@ Z80::Z80() : instructions({ {
 		{ "POP BC",						6,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xc1
 		{ "JP NZ, 0x%04X",				0,	3,	{.op2 = &Z80::unimplemented_op2 }},	// 0xc2
 		{ "JP 0x%04X",					6,	3,	{.op2 = &Z80::unimplemented_op2 }},	// 0xc3
-		{ "CALL NZ, 0x%04X",			0,	3,	{.op2 = &Z80::unimplemented_op2 }},	// 0xc4
+		{ "CALL NZ, 0x%04X",			0,	3,	{.op2 = &Z80::CALL_NZ			}},	// 0xc4
 		{ "PUSH BC",					8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xc5
 		{ "ADD A, 0x%02X",				4,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0xc6
 		{ "RST 0x00",					8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xc7
@@ -532,15 +596,15 @@ Z80::Z80() : instructions({ {
 		{ "RET",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xc9
 		{ "JP Z, 0x%04X",				0,	3,	{.op2 = &Z80::unimplemented_op2 }},	// 0xca
 		{ "CB %02X",					0,	2,	{.op1 = &Z80::PREFIX			}},	// 0xcb
-		{ "CALL Z, 0x%04X",				0,	3,	{.op2 = &Z80::unimplemented_op2 }},	// 0xcc
-		{ "CALL 0x%04X",				6,	3,	{.op2 = &Z80::unimplemented_op2 }},	// 0xcd
+		{ "CALL Z, 0x%04X",				0,	3,	{.op2 = &Z80::CALL_Z			}},	// 0xcc
+		{ "CALL 0x%04X",				24,	3,	{.op2 = &Z80::CALL				}},	// 0xcd
 		{ "ADC 0x%02X",					4,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0xce
 		{ "RST 0x08",					8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xcf
 		{ "RET NC",						0,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xd0
 		{ "POP DE",						6,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xd1
 		{ "JP NC, 0x%04X",				0,	3,	{.op2 = &Z80::unimplemented_op2 }},	// 0xd2
 		{ "UNKNOWN",					0,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xd3
-		{ "CALL NC, 0x%04X",			0,	3,	{.op2 = &Z80::unimplemented_op2 }},	// 0xd4
+		{ "CALL NC, 0x%04X",			0,	3,	{.op2 = &Z80::CALL_NC			}},	// 0xd4
 		{ "PUSH DE",					8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xd5
 		{ "SUB 0x%02X",					4,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0xd6
 		{ "RST 0x10",					8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xd7
@@ -548,7 +612,7 @@ Z80::Z80() : instructions({ {
 		{ "RETI",						8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xd9
 		{ "JP C, 0x%04X",				0,	3,	{.op2 = &Z80::unimplemented_op2 }},	// 0xda
 		{ "UNKNOWN",					0,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xdb
-		{ "CALL C, 0x%04X",				0,	3,	{.op2 = &Z80::unimplemented_op2 }},	// 0xdc
+		{ "CALL C, 0x%04X",				0,	3,	{.op2 = &Z80::CALL_C			}},	// 0xdc
 		{ "UNKNOWN",					0,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xdd
 		{ "SBC 0x%02X",					4,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0xde
 		{ "RST 0x18",					8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xdf
