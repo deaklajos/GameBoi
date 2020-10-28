@@ -97,8 +97,11 @@ private:
 	void PREFIX(uint8_t instuction);
 	void XOR_A(void);
 	void JR_NZ(uint8_t signed_offset);
+	void LD_B_d8(uint8_t data);
 	void LD_C_d8(uint8_t data);
+	void LD_D_d8(uint8_t data);
 	void LD_E_d8(uint8_t data);
+	void LD_H_d8(uint8_t data);
 	void LD_L_d8(uint8_t data);
 	void LD_A_d8(uint8_t data);
 	void CALL_NZ(uint16_t address);

@@ -518,14 +518,29 @@ void Z80::JR_NZ(uint8_t signed_offset)
 		cycles += 8;
 }
 
+void Z80::LD_B_d8(uint8_t data)
+{
+	registers.b = data;
+}
+
 void Z80::LD_C_d8(uint8_t data)
 {
 	registers.c = data;
 }
 
+void Z80::LD_D_d8(uint8_t data)
+{
+	registers.d = data;
+}
+
 void Z80::LD_E_d8(uint8_t data)
 {
 	registers.e = data;
+}
+
+void Z80::LD_H_d8(uint8_t data)
+{
+	registers.h = data;
 }
 
 void Z80::LD_L_d8(uint8_t data)
@@ -611,7 +626,7 @@ Z80::Z80() : instructions({ {
 		{ "INC BC",						4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x03
 		{ "INC B",						4,	1,	{.op0 = &Z80::INC_B				}},	// 0x04
 		{ "DEC B",						4,	1,	{.op0 = &Z80::DEC_B				}},	// 0x05
-		{ "LD B, 0x%02X",				4,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0x06
+		{ "LD B, 0x%02X",				8,	2,	{.op1 = &Z80::LD_B_d8			}},	// 0x06
 		{ "RLCA",						4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x07
 		{ "LD (0x%04X), SP",			10,	3,	{.op2 = &Z80::unimplemented_op2 }},	// 0x08
 		{ "ADD HL, BC",					4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x09
@@ -627,7 +642,7 @@ Z80::Z80() : instructions({ {
 		{ "INC DE",						4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x13
 		{ "INC D",						4,	1,	{.op0 = &Z80::INC_D				}},	// 0x14
 		{ "DEC D",						4,	1,	{.op0 = &Z80::DEC_D				}},	// 0x15
-		{ "LD D, 0x%02X",				4,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0x16
+		{ "LD D, 0x%02X",				8,	2,	{.op1 = &Z80::LD_D_d8			}},	// 0x16
 		{ "RLA",						4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x17
 		{ "JR 0x%02X",					4,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0x18
 		{ "ADD HL, DE",					4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x19
@@ -643,7 +658,7 @@ Z80::Z80() : instructions({ {
 		{ "INC HL",						4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x23
 		{ "INC H",						4,	1,	{.op0 = &Z80::INC_H				}},	// 0x24
 		{ "DEC H",						4,	1,	{.op0 = &Z80::DEC_H				}},	// 0x25
-		{ "LD H, 0x%02X",				4,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0x26
+		{ "LD H, 0x%02X",				8,	2,	{.op1 = &Z80::LD_H_d8			}},	// 0x26
 		{ "DAA",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x27
 		{ "JR Z, 0x%02X",				0,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0x28
 		{ "ADD HL, HL",					4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x29
