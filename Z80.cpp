@@ -455,9 +455,9 @@ void Z80::PREFIX(uint8_t instuction)
 		registers.f &= ~SUBTRACT_FLAG;	// CLEAR
 
 		if ((1u << 7) & registers.h)
-			registers.f |= ZERO_FLAG;	// SET
-		else
 			registers.f &= ~ZERO_FLAG;	// CLEAR
+		else
+			registers.f |= ZERO_FLAG;	// SET
 
 		cycles += 8;
 	}
@@ -466,10 +466,10 @@ void Z80::PREFIX(uint8_t instuction)
 		registers.f |= HALF_CARRY_FLAG;	// SET
 		registers.f &= ~SUBTRACT_FLAG;	// CLEAR
 
-		if ((1u) & registers.h)
-			registers.f |= ZERO_FLAG;	// SET
-		else
+		if ((1u) & registers.a)
 			registers.f &= ~ZERO_FLAG;	// CLEAR
+		else
+			registers.f |= ZERO_FLAG;	// SET
 
 		cycles += 8;
 	}
@@ -485,7 +485,12 @@ void Z80::PREFIX(uint8_t instuction)
 			registers.f &= ~CARRY_FLAG;	// CLEAR
 
 		registers.c <<= 1;
-		registers.c += carry;
+		registers.c |= carry;
+
+		if (registers.c)
+			registers.f &= ~ZERO_FLAG;	// CLEAR
+		else
+			registers.f |= ZERO_FLAG;	// SET
 
 		cycles += 8;
 	}
@@ -503,6 +508,76 @@ void Z80::XOR_A(void)
 		registers.f = ZERO_FLAG;
 	else
 		registers.f = 0;
+}
+
+void Z80::RLCA(void)
+{
+	registers.f &= ~ZERO_FLAG;			// CLEAR
+	registers.f &= ~SUBTRACT_FLAG;		// CLEAR
+	registers.f &= ~HALF_CARRY_FLAG;	// CLEAR
+
+	uint8_t carry = (registers.a & (1u << 7)) >> 7;
+
+	if (carry)
+		registers.f |= CARRY_FLAG;	// SET
+	else
+		registers.f &= ~CARRY_FLAG;	// CLEAR
+
+	registers.a <<= 1;
+	registers.a |= carry;
+}
+
+void Z80::RRCA(void)
+{
+	registers.f &= ~ZERO_FLAG;			// CLEAR
+	registers.f &= ~SUBTRACT_FLAG;		// CLEAR
+	registers.f &= ~HALF_CARRY_FLAG;	// CLEAR
+
+	uint8_t carry = registers.a & 1u;
+
+	if (carry)
+		registers.f |= CARRY_FLAG;	// SET
+	else
+		registers.f &= ~CARRY_FLAG;	// CLEAR
+
+	registers.a >>= 1;
+	registers.a |= (carry << 7);
+}
+
+void Z80::RLA(void)
+{
+	registers.f &= ~ZERO_FLAG;			// CLEAR
+	registers.f &= ~SUBTRACT_FLAG;		// CLEAR
+	registers.f &= ~HALF_CARRY_FLAG;	// CLEAR
+
+	uint8_t carry_flag = (registers.f & CARRY_FLAG) ? 1u : 0u;
+	uint8_t carry = (registers.a & (1u << 7)) >> 7;
+
+	if (carry)
+		registers.f |= CARRY_FLAG;	// SET
+	else
+		registers.f &= ~CARRY_FLAG;	// CLEAR
+
+	registers.a <<= 1;
+	registers.a |= carry_flag;
+}
+
+void Z80::RRA(void)
+{
+	registers.f &= ~ZERO_FLAG;			// CLEAR
+	registers.f &= ~SUBTRACT_FLAG;		// CLEAR
+	registers.f &= ~HALF_CARRY_FLAG;	// CLEAR
+
+	uint8_t carry_flag = (registers.f & CARRY_FLAG) ? 1u : 0u;
+	uint8_t carry = registers.a & 1u;
+
+	if (carry)
+		registers.f |= CARRY_FLAG;	// SET
+	else
+		registers.f &= ~CARRY_FLAG;	// CLEAR
+
+	registers.a >>= 1;
+	registers.a |= (carry_flag << 7);
 }
 
 void Z80::JR_NZ(uint8_t signed_offset)
@@ -667,7 +742,7 @@ Z80::Z80() : instructions({ {
 		{ "INC B",						4,	1,	{.op0 = &Z80::INC_B				}},	// 0x04
 		{ "DEC B",						4,	1,	{.op0 = &Z80::DEC_B				}},	// 0x05
 		{ "LD B, 0x%02X",				8,	2,	{.op1 = &Z80::LD_B_d8			}},	// 0x06
-		{ "RLCA",						4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x07
+		{ "RLCA",						4,	1,	{.op0 = &Z80::RLCA				}},	// 0x07
 		{ "LD (0x%04X), SP",			10,	3,	{.op2 = &Z80::unimplemented_op2 }},	// 0x08
 		{ "ADD HL, BC",					4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x09
 		{ "LD A, (BC)",					8,	1,	{.op0 = &Z80::LD_A_BCa			}},	// 0x0a
@@ -675,7 +750,7 @@ Z80::Z80() : instructions({ {
 		{ "INC C",						4,	1,	{.op0 = &Z80::INC_C				}},	// 0x0c
 		{ "DEC C",						4,	1,	{.op0 = &Z80::DEC_C				}},	// 0x0d
 		{ "LD C, 0x%02X",				8,	2,	{.op1 = &Z80::LD_C_d8			}},	// 0x0e
-		{ "RRCA",						4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x0f
+		{ "RRCA",						4,	1,	{.op0 = &Z80::RRCA				}},	// 0x0f
 		{ "STOP",						2,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0x10
 		{ "LD DE, 0x%04X",				12,	3,	{.op2 = &Z80::LD_DE_d16			}},	// 0x11
 		{ "LD (DE), A",					4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x12
@@ -683,7 +758,7 @@ Z80::Z80() : instructions({ {
 		{ "INC D",						4,	1,	{.op0 = &Z80::INC_D				}},	// 0x14
 		{ "DEC D",						4,	1,	{.op0 = &Z80::DEC_D				}},	// 0x15
 		{ "LD D, 0x%02X",				8,	2,	{.op1 = &Z80::LD_D_d8			}},	// 0x16
-		{ "RLA",						4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x17
+		{ "RLA",						4,	1,	{.op0 = &Z80::RLA				}},	// 0x17
 		{ "JR 0x%02X",					4,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0x18
 		{ "ADD HL, DE",					4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x19
 		{ "LD A, (DE)",					8,	1,	{.op0 = &Z80::LD_A_DEa			}},	// 0x1a
@@ -691,7 +766,7 @@ Z80::Z80() : instructions({ {
 		{ "INC E",						4,	1,	{.op0 = &Z80::INC_E				}},	// 0x1c
 		{ "DEC E",						4,	1,	{.op0 = &Z80::DEC_E				}},	// 0x1d
 		{ "LD E, 0x%02X",				8,	2,	{.op1 = &Z80::LD_E_d8			}},	// 0x1e
-		{ "RRA",						4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x1f
+		{ "RRA",						4,	1,	{.op0 = &Z80::RRA				}},	// 0x1f
 		{ "JR NZ, 0x%02X",				0,	2,	{.op1 = &Z80::JR_NZ				}},	// 0x20
 		{ "LD HL, 0x%04X",				12,	3,	{.op2 = &Z80::LD_HL_d16			}},	// 0x21
 		{ "LDI (HL), A",				8,	1,	{.op0 = &Z80::LDI_HLa_A			}},	// 0x22
