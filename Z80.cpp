@@ -617,6 +617,46 @@ void Z80::push_16(uint16_t data)
 	memory.write_16(registers.sp, data);
 }
 
+void Z80::POP_BC(void)
+{
+	registers.bc = pop_16();
+}
+
+void Z80::PUSH_BC(void)
+{
+	push_16(registers.bc);
+}
+
+void Z80::POP_DE(void)
+{
+	registers.de = pop_16();
+}
+
+void Z80::PUSH_DE(void)
+{
+	push_16(registers.de);
+}
+
+void Z80::POP_HL(void)
+{
+	registers.hl = pop_16();
+}
+
+void Z80::PUSH_HL(void)
+{
+	push_16(registers.hl);
+}
+
+void Z80::POP_AF(void)
+{
+	registers.af = pop_16();
+}
+
+void Z80::PUSH_AF(void)
+{
+	push_16(registers.af);
+}
+
 // TODO CLEAN UP INSTRUCTION TIMING AND USE T CYCLES!!!
 // instruction table is a modified version of: https://cturt.github.io/cinoop.html
 Z80::Z80() : instructions({ {
@@ -813,11 +853,11 @@ Z80::Z80() : instructions({ {
 		{ "CP (HL)",					4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xbe
 		{ "CP A",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xbf
 		{ "RET NZ",						0,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xc0
-		{ "POP BC",						6,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xc1
+		{ "POP BC",						12,	1,	{.op0 = &Z80::POP_BC			}},	// 0xc1
 		{ "JP NZ, 0x%04X",				0,	3,	{.op2 = &Z80::unimplemented_op2 }},	// 0xc2
 		{ "JP 0x%04X",					6,	3,	{.op2 = &Z80::unimplemented_op2 }},	// 0xc3
 		{ "CALL NZ, 0x%04X",			0,	3,	{.op2 = &Z80::CALL_NZ			}},	// 0xc4
-		{ "PUSH BC",					8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xc5
+		{ "PUSH BC",					16,	1,	{.op0 = &Z80::PUSH_BC			}},	// 0xc5
 		{ "ADD A, 0x%02X",				4,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0xc6
 		{ "RST 0x00",					8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xc7
 		{ "RET Z",						0,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xc8
@@ -829,11 +869,11 @@ Z80::Z80() : instructions({ {
 		{ "ADC 0x%02X",					4,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0xce
 		{ "RST 0x08",					8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xcf
 		{ "RET NC",						0,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xd0
-		{ "POP DE",						6,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xd1
+		{ "POP DE",						12,	1,	{.op0 = &Z80::POP_DE			}},	// 0xd1
 		{ "JP NC, 0x%04X",				0,	3,	{.op2 = &Z80::unimplemented_op2 }},	// 0xd2
 		{ "UNKNOWN",					0,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xd3
 		{ "CALL NC, 0x%04X",			0,	3,	{.op2 = &Z80::CALL_NC			}},	// 0xd4
-		{ "PUSH DE",					8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xd5
+		{ "PUSH DE",					16,	1,	{.op0 = &Z80::PUSH_DE			}},	// 0xd5
 		{ "SUB 0x%02X",					4,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0xd6
 		{ "RST 0x10",					8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xd7
 		{ "RET C",						0,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xd8
@@ -845,11 +885,11 @@ Z80::Z80() : instructions({ {
 		{ "SBC 0x%02X",					4,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0xde
 		{ "RST 0x18",					8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xdf
 		{ "LD (0xFF00 + 0x%02X), A",	12,	2,	{.op1 = &Z80::LD_FF_a8_A		}},	// 0xe0
-		{ "POP HL",						6,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xe1
+		{ "POP HL",						12,	1,	{.op0 = &Z80::POP_HL			}},	// 0xe1
 		{ "LD (0xFF00 + C), A",			8,	1,	{.op0 = &Z80::LD_FF_C_A			}},	// 0xe2
 		{ "UNKNOWN",					0,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xe3
 		{ "UNKNOWN",					0,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xe4
-		{ "PUSH HL",					8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xe5
+		{ "PUSH HL",					16,	1,	{.op0 = &Z80::POP_HL			}},	// 0xe5
 		{ "AND 0x%02X",					4,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0xe6
 		{ "RST 0x20",					8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xe7
 		{ "ADD SP,0x%02X",				8,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0xe8
@@ -861,11 +901,11 @@ Z80::Z80() : instructions({ {
 		{ "XOR 0x%02X",					4,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0xee
 		{ "RST 0x28",					8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xef
 		{ "LD A, (0xFF00 + 0x%02X)",	6,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0xf0
-		{ "POP AF",						6,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xf1
+		{ "POP AF",						12,	1,	{.op0 = &Z80::POP_AF			}},	// 0xf1
 		{ "LD A, (0xFF00 + C)",			4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xf2
 		{ "DI",							2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xf3
 		{ "UNKNOWN",					0,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xf4
-		{ "PUSH AF",					8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xf5
+		{ "PUSH AF",					16,	1,	{.op0 = &Z80::PUSH_AF			}},	// 0xf5
 		{ "OR 0x%02X",					4,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0xf6
 		{ "RST 0x30",					8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xf7
 		{ "LD HL, SP+0x%02X",			6,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0xf8

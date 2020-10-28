@@ -109,6 +109,14 @@ private:
 	void CALL(uint16_t address);
 	void CALL_NC(uint16_t address);
 	void CALL_C(uint16_t address);
+	void POP_BC(void);
+	void PUSH_BC(void);
+	void POP_DE(void);
+	void PUSH_DE(void);
+	void POP_HL(void);
+	void PUSH_HL(void);
+	void POP_AF(void);
+	void PUSH_AF(void);
 	void unimplemented_op0(void);
 	void unimplemented_op1(uint8_t);
 	void unimplemented_op2(uint16_t);
