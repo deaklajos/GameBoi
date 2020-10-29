@@ -52,7 +52,11 @@ private:
 	void INC_A(void);
 	void DEC_A(void);
 	void LD_FF_a8_A(uint8_t address);
-	void LD_FF_C_A(void);
+	void LD_FF_Ca_A(void);
+	void LD_a16_A(uint16_t address);
+	void LD_FF_A_a8(uint8_t address);
+	void LD_FF_A_Ca(void);
+	void LD_A_a16(uint16_t address);
 	void LD_HLa_B(void);
 	void LD_HLa_C(void);
 	void LD_HLa_D(void);

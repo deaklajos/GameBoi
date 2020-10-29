@@ -235,9 +235,29 @@ void Z80::LD_FF_a8_A(uint8_t address)
 	memory.write_8((uint16_t)0xff00u + address, registers.a);
 }
 
-void Z80::LD_FF_C_A(void)
+void Z80::LD_FF_Ca_A(void)
 {
 	memory.write_8((uint16_t)0xff00u + registers.c, registers.a);
+}
+
+void Z80::LD_a16_A(uint16_t address)
+{
+	memory.write_8(address, registers.a);
+}
+
+void Z80::LD_FF_A_a8(uint8_t address)
+{
+	registers.a = memory.read_8((uint16_t)0xff00u + address);
+}
+
+void Z80::LD_FF_A_Ca(void)
+{
+	registers.a = memory.read_8((uint16_t)0xff00u + registers.c);
+}
+
+void Z80::LD_A_a16(uint16_t address)
+{
+	registers.a = memory.read_8(address);
 }
 
 void Z80::LD_HLa_B(void)
@@ -1127,7 +1147,7 @@ Z80::Z80() : instructions({ {
 		{ "RST 0x18",					8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xdf
 		{ "LD (0xFF00 + 0x%02X), A",	12,	2,	{.op1 = &Z80::LD_FF_a8_A		}},	// 0xe0
 		{ "POP HL",						12,	1,	{.op0 = &Z80::POP_HL			}},	// 0xe1
-		{ "LD (0xFF00 + C), A",			8,	1,	{.op0 = &Z80::LD_FF_C_A			}},	// 0xe2
+		{ "LD (0xFF00 + C), A",			8,	1,	{.op0 = &Z80::LD_FF_Ca_A		}},	// 0xe2
 		{ "UNKNOWN",					0,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xe3
 		{ "UNKNOWN",					0,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xe4
 		{ "PUSH HL",					16,	1,	{.op0 = &Z80::POP_HL			}},	// 0xe5
@@ -1135,15 +1155,15 @@ Z80::Z80() : instructions({ {
 		{ "RST 0x20",					8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xe7
 		{ "ADD SP,0x%02X",				8,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0xe8
 		{ "JP HL",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xe9
-		{ "LD (0x%04X), A",				8,	3,	{.op2 = &Z80::unimplemented_op2 }},	// 0xea
+		{ "LD (0x%04X), A",				16,	3,	{.op2 = &Z80::LD_a16_A			}},	// 0xea
 		{ "UNKNOWN",					0,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xeb
 		{ "UNKNOWN",					0,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xec
 		{ "UNKNOWN",					0,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xed
 		{ "XOR 0x%02X",					4,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0xee
 		{ "RST 0x28",					8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xef
-		{ "LD A, (0xFF00 + 0x%02X)",	6,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0xf0
+		{ "LD A, (0xFF00 + 0x%02X)",	12,	2,	{.op1 = &Z80::LD_FF_A_a8		}},	// 0xf0
 		{ "POP AF",						12,	1,	{.op0 = &Z80::POP_AF			}},	// 0xf1
-		{ "LD A, (0xFF00 + C)",			4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xf2
+		{ "LD A, (0xFF00 + C)",			8,	1,	{.op0 = &Z80::LD_FF_A_Ca		}},	// 0xf2
 		{ "DI",							2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xf3
 		{ "UNKNOWN",					0,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xf4
 		{ "PUSH AF",					16,	1,	{.op0 = &Z80::PUSH_AF			}},	// 0xf5
@@ -1151,7 +1171,7 @@ Z80::Z80() : instructions({ {
 		{ "RST 0x30",					8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xf7
 		{ "LD HL, SP+0x%02X",			6,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0xf8
 		{ "LD SP, HL",					4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xf9
-		{ "LD A, (0x%04X)",				8,	3,	{.op2 = &Z80::unimplemented_op2 }},	// 0xfa
+		{ "LD A, (0x%04X)",				16,	3,	{.op2 = &Z80::LD_A_a16			}},	// 0xfa
 		{ "EI",							2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xfb
 		{ "UNKNOWN",					0,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xfc
 		{ "UNKNOWN",					0,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xfd
