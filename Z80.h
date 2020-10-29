@@ -108,7 +108,12 @@ private:
 	void RRCA(void);
 	void RLA(void);
 	void RRA(void);
+	inline void jr(uint8_t signed_offset, bool doJump);
+	void JR_r8(uint8_t signed_offset);
 	void JR_NZ(uint8_t signed_offset);
+	void JR_Z(uint8_t signed_offset);
+	void JR_NC(uint8_t signed_offset);
+	void JR_C(uint8_t signed_offset);
 	void LD_B_d8(uint8_t data);
 	void LD_C_d8(uint8_t data);
 	void LD_D_d8(uint8_t data);

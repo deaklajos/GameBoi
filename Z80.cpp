@@ -620,17 +620,42 @@ void Z80::RRA(void)
 	registers.a |= (carry_flag << 7);
 }
 
-void Z80::JR_NZ(uint8_t signed_offset)
+inline void Z80::jr(uint8_t signed_offset, bool doJump)
 {
 	int8_t offset = signed_offset;
 
-	if (registers.f & ZERO_FLAG)
-		cycles += 8;
-	else
+	if (doJump)
 	{
 		registers.pc += offset;
 		cycles += 12;
 	}
+	else
+		cycles += 8;
+}
+
+void Z80::JR_r8(uint8_t signed_offset)
+{
+	jr(signed_offset, true);
+}
+
+void Z80::JR_NZ(uint8_t signed_offset)
+{
+	jr(signed_offset, !(registers.f & ZERO_FLAG));
+}
+
+void Z80::JR_Z(uint8_t signed_offset)
+{
+	jr(signed_offset, registers.f & ZERO_FLAG);
+}
+
+void Z80::JR_NC(uint8_t signed_offset)
+{
+	jr(signed_offset, !(registers.f & CARRY_FLAG));
+}
+
+void Z80::JR_C(uint8_t signed_offset)
+{
+	jr(signed_offset, registers.f & CARRY_FLAG);
 }
 
 void Z80::LD_B_d8(uint8_t data)
@@ -900,7 +925,7 @@ Z80::Z80() : instructions({ {
 		{ "DEC D",						4,	1,	{.op0 = &Z80::DEC_D				}},	// 0x15
 		{ "LD D, 0x%02X",				8,	2,	{.op1 = &Z80::LD_D_d8			}},	// 0x16
 		{ "RLA",						4,	1,	{.op0 = &Z80::RLA				}},	// 0x17
-		{ "JR 0x%02X",					4,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0x18
+		{ "JR 0x%02X",					0,	2,	{.op1 = &Z80::JR_r8				}},	// 0x18
 		{ "ADD HL, DE",					4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x19
 		{ "LD A, (DE)",					8,	1,	{.op0 = &Z80::LD_A_DEa			}},	// 0x1a
 		{ "DEC DE",						8,	1,	{.op0 = &Z80::DEC_DE			}},	// 0x1b
@@ -916,7 +941,7 @@ Z80::Z80() : instructions({ {
 		{ "DEC H",						4,	1,	{.op0 = &Z80::DEC_H				}},	// 0x25
 		{ "LD H, 0x%02X",				8,	2,	{.op1 = &Z80::LD_H_d8			}},	// 0x26
 		{ "DAA",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x27
-		{ "JR Z, 0x%02X",				0,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0x28
+		{ "JR Z, 0x%02X",				0,	2,	{.op1 = &Z80::JR_Z				}},	// 0x28
 		{ "ADD HL, HL",					4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x29
 		{ "LDI A, (HL)",				4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x2a
 		{ "DEC HL",						8,	1,	{.op0 = &Z80::DEC_HL			}},	// 0x2b
@@ -924,7 +949,7 @@ Z80::Z80() : instructions({ {
 		{ "DEC L",						4,	1,	{.op0 = &Z80::DEC_L				}},	// 0x2d
 		{ "LD L, 0x%02X",				8,	2,	{.op1 = &Z80::LD_L_d8			}},	// 0x2e
 		{ "CPL",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x2f
-		{ "JR NC, 0x%02X",				4,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0x30
+		{ "JR NC, 0x%02X",				0,	2,	{.op1 = &Z80::JR_NC				}},	// 0x30
 		{ "LD SP, 0x%04X",				12,	3,	{.op2 = &Z80::LD_SP_d16			}},	// 0x31
 		{ "LDD (HL), A",				8,	1,	{.op0 = &Z80::LDD_HLa_A			}},	// 0x32
 		{ "INC SP",						8,	1,	{.op0 = &Z80::INC_SP			}},	// 0x33
@@ -932,7 +957,7 @@ Z80::Z80() : instructions({ {
 		{ "DEC (HL)",					12,	1,	{.op0 = &Z80::DEC_HLa			}},	// 0x35
 		{ "LD (HL), 0x%02X",			6,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0x36
 		{ "SCF",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x37
-		{ "JR C, 0x%02X",				0,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0x38
+		{ "JR C, 0x%02X",				0,	2,	{.op1 = &Z80::JR_C				}},	// 0x38
 		{ "ADD HL, SP",					4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x39
 		{ "LDD A, (HL)",				4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x3a
 		{ "DEC SP",						8,	1,	{.op0 = &Z80::DEC_SP			}},	// 0x3b
