@@ -727,7 +727,7 @@ uint16_t Z80::pop_16(void)
 }
 
 void Z80::push_16(uint16_t data)
-{
+{ // TODO Bottom of stack left unused?
 	registers.sp -= 2;
 	memory.write_16(registers.sp, data);
 }
@@ -806,6 +806,71 @@ void Z80::RET_NC(void)
 void Z80::RET_C(void)
 {
 	conditional_return(registers.f & CARRY_FLAG);
+}
+
+inline void Z80::cp(uint8_t value)
+{
+	if (registers.a == value)
+		registers.f |= ZERO_FLAG;	// SET
+	else
+		registers.f &= ~ZERO_FLAG;	// CLEAR
+
+	registers.f |= SUBTRACT_FLAG;	// SET
+
+	if ((value & 0x0f) > (registers.a & 0x0f))
+		registers.f |= HALF_CARRY_FLAG;	// SET
+	else
+		registers.f &= ~HALF_CARRY_FLAG;	// CLEAR
+
+	if (value > registers.a)
+		registers.f |= CARRY_FLAG;	// SET
+	else
+		registers.f &= ~CARRY_FLAG;	// CLEAR
+}
+
+void Z80::CP_B(void)
+{
+	cp(registers.b);
+}
+
+void Z80::CP_C(void)
+{
+	cp(registers.c);
+}
+
+void Z80::CP_D(void)
+{
+	cp(registers.d);
+}
+
+void Z80::CP_E(void)
+{
+	cp(registers.e);
+}
+
+void Z80::CP_H(void)
+{
+	cp(registers.h);
+}
+
+void Z80::CP_L(void)
+{
+	cp(registers.l);
+}
+
+void Z80::CP_HLa(void)
+{
+	cp(memory.read_8(registers.hl));
+}
+
+void Z80::CP_A(void)
+{
+	cp(registers.a);
+}
+
+void Z80::CP_d8(uint8_t value)
+{
+	cp(value);
 }
 
 // TODO CLEAN UP INSTRUCTION TIMING AND USE T CYCLES!!!
@@ -995,14 +1060,14 @@ Z80::Z80() : instructions({ {
 		{ "OR L",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xb5
 		{ "OR (HL)",					4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xb6
 		{ "OR A",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xb7
-		{ "CP B",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xb8
-		{ "CP C",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xb9
-		{ "CP D",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xba
-		{ "CP E",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xbb
-		{ "CP H",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xbc
-		{ "CP L",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xbd
-		{ "CP (HL)",					4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xbe
-		{ "CP A",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xbf
+		{ "CP B",						4,	1,	{.op0 = &Z80::CP_B				}},	// 0xb8
+		{ "CP C",						4,	1,	{.op0 = &Z80::CP_C				}},	// 0xb9
+		{ "CP D",						4,	1,	{.op0 = &Z80::CP_D				}},	// 0xba
+		{ "CP E",						4,	1,	{.op0 = &Z80::CP_E				}},	// 0xbb
+		{ "CP H",						4,	1,	{.op0 = &Z80::CP_H				}},	// 0xbc
+		{ "CP L",						4,	1,	{.op0 = &Z80::CP_L				}},	// 0xbd
+		{ "CP (HL)",					8,	1,	{.op0 = &Z80::CP_HLa			}},	// 0xbe
+		{ "CP A",						4,	1,	{.op0 = &Z80::CP_A				}},	// 0xbf
 		{ "RET NZ",						0,	1,	{.op0 = &Z80::RET_NZ			}},	// 0xc0
 		{ "POP BC",						12,	1,	{.op0 = &Z80::POP_BC			}},	// 0xc1
 		{ "JP NZ, 0x%04X",				0,	3,	{.op2 = &Z80::unimplemented_op2 }},	// 0xc2
@@ -1065,7 +1130,7 @@ Z80::Z80() : instructions({ {
 		{ "EI",							2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xfb
 		{ "UNKNOWN",					0,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xfc
 		{ "UNKNOWN",					0,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xfd
-		{ "CP 0x%02X",					4,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0xfe
+		{ "CP 0x%02X",					8,	2,	{.op1 = &Z80::CP_d8				}},	// 0xfe
 		{ "RST 0x38",					8,	1,	{.op0 = &Z80::unimplemented_op0 }}	// 0xff
 	} }),
 	memory(registers.pc)

@@ -135,6 +135,16 @@ private:
 	void RET(void);
 	void RET_NC(void);
 	void RET_C(void);
+	inline void cp(uint8_t value);
+	void CP_B(void);
+	void CP_C(void);
+	void CP_D(void);
+	void CP_E(void);
+	void CP_H(void);
+	void CP_L(void);
+	void CP_HLa(void);
+	void CP_A(void);
+	void CP_d8(uint8_t value);
 	void unimplemented_op0(void);
 	void unimplemented_op1(uint8_t);
 	void unimplemented_op2(uint16_t);
