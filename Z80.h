@@ -129,6 +129,12 @@ private:
 	void PUSH_HL(void);
 	void POP_AF(void);
 	void PUSH_AF(void);
+	inline void conditional_return(bool doReturn);
+	void RET_NZ(void);
+	void RET_Z(void);
+	void RET(void);
+	void RET_NC(void);
+	void RET_C(void);
 	void unimplemented_op0(void);
 	void unimplemented_op1(uint8_t);
 	void unimplemented_op2(uint16_t);
