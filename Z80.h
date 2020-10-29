@@ -39,6 +39,14 @@ private:
 	void DEC_H(void);
 	void INC_L(void);
 	void DEC_L(void);
+	void INC_BC(void);
+	void DEC_BC(void);
+	void INC_DE(void);
+	void DEC_DE(void);
+	void INC_HL(void);
+	void DEC_HL(void);
+	void INC_SP(void);
+	void DEC_SP(void);
 	void INC_HLa(void);
 	void DEC_HLa(void);
 	void INC_A(void);

@@ -166,6 +166,46 @@ void Z80::DEC_L(void)
 	dec(registers.l);
 }
 
+void Z80::INC_BC(void)
+{
+	registers.bc++;
+}
+
+void Z80::DEC_BC(void)
+{
+	registers.bc--;
+}
+
+void Z80::INC_DE(void)
+{
+	registers.de++;
+}
+
+void Z80::DEC_DE(void)
+{
+	registers.de--;
+}
+
+void Z80::INC_HL(void)
+{
+	registers.hl++;
+}
+
+void Z80::DEC_HL(void)
+{
+	registers.hl--;
+}
+
+void Z80::INC_SP(void)
+{
+	registers.af++;
+}
+
+void Z80::DEC_SP(void)
+{
+	registers.af--;
+}
+
 void Z80::INC_HLa(void)
 {
 	uint8_t value = memory.read_8(registers.hl);
@@ -735,10 +775,10 @@ void Z80::PUSH_AF(void)
 // TODO CLEAN UP INSTRUCTION TIMING AND USE T CYCLES!!!
 // instruction table is a modified version of: https://cturt.github.io/cinoop.html
 Z80::Z80() : instructions({ {
-		{ "NOP",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x00
+		{ "NOP",						4,	1,	{.op0 = &Z80::NOP				}},	// 0x00
 		{ "LD BC, 0x%04X",				12,	3,	{.op2 = &Z80::LD_BC_d16			}},	// 0x01
 		{ "LD (BC), A",					4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x02
-		{ "INC BC",						4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x03
+		{ "INC BC",						8,	1,	{.op0 = &Z80::INC_BC			}},	// 0x03
 		{ "INC B",						4,	1,	{.op0 = &Z80::INC_B				}},	// 0x04
 		{ "DEC B",						4,	1,	{.op0 = &Z80::DEC_B				}},	// 0x05
 		{ "LD B, 0x%02X",				8,	2,	{.op1 = &Z80::LD_B_d8			}},	// 0x06
@@ -746,7 +786,7 @@ Z80::Z80() : instructions({ {
 		{ "LD (0x%04X), SP",			10,	3,	{.op2 = &Z80::unimplemented_op2 }},	// 0x08
 		{ "ADD HL, BC",					4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x09
 		{ "LD A, (BC)",					8,	1,	{.op0 = &Z80::LD_A_BCa			}},	// 0x0a
-		{ "DEC BC",						4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x0b
+		{ "DEC BC",						8,	1,	{.op0 = &Z80::DEC_BC			}},	// 0x0b
 		{ "INC C",						4,	1,	{.op0 = &Z80::INC_C				}},	// 0x0c
 		{ "DEC C",						4,	1,	{.op0 = &Z80::DEC_C				}},	// 0x0d
 		{ "LD C, 0x%02X",				8,	2,	{.op1 = &Z80::LD_C_d8			}},	// 0x0e
@@ -754,7 +794,7 @@ Z80::Z80() : instructions({ {
 		{ "STOP",						2,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0x10
 		{ "LD DE, 0x%04X",				12,	3,	{.op2 = &Z80::LD_DE_d16			}},	// 0x11
 		{ "LD (DE), A",					4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x12
-		{ "INC DE",						4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x13
+		{ "INC DE",						8,	1,	{.op0 = &Z80::INC_DE			}},	// 0x13
 		{ "INC D",						4,	1,	{.op0 = &Z80::INC_D				}},	// 0x14
 		{ "DEC D",						4,	1,	{.op0 = &Z80::DEC_D				}},	// 0x15
 		{ "LD D, 0x%02X",				8,	2,	{.op1 = &Z80::LD_D_d8			}},	// 0x16
@@ -762,7 +802,7 @@ Z80::Z80() : instructions({ {
 		{ "JR 0x%02X",					4,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0x18
 		{ "ADD HL, DE",					4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x19
 		{ "LD A, (DE)",					8,	1,	{.op0 = &Z80::LD_A_DEa			}},	// 0x1a
-		{ "DEC DE",						4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x1b
+		{ "DEC DE",						8,	1,	{.op0 = &Z80::DEC_DE			}},	// 0x1b
 		{ "INC E",						4,	1,	{.op0 = &Z80::INC_E				}},	// 0x1c
 		{ "DEC E",						4,	1,	{.op0 = &Z80::DEC_E				}},	// 0x1d
 		{ "LD E, 0x%02X",				8,	2,	{.op1 = &Z80::LD_E_d8			}},	// 0x1e
@@ -770,7 +810,7 @@ Z80::Z80() : instructions({ {
 		{ "JR NZ, 0x%02X",				0,	2,	{.op1 = &Z80::JR_NZ				}},	// 0x20
 		{ "LD HL, 0x%04X",				12,	3,	{.op2 = &Z80::LD_HL_d16			}},	// 0x21
 		{ "LDI (HL), A",				8,	1,	{.op0 = &Z80::LDI_HLa_A			}},	// 0x22
-		{ "INC HL",						4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x23
+		{ "INC HL",						8,	1,	{.op0 = &Z80::INC_HL			}},	// 0x23
 		{ "INC H",						4,	1,	{.op0 = &Z80::INC_H				}},	// 0x24
 		{ "DEC H",						4,	1,	{.op0 = &Z80::DEC_H				}},	// 0x25
 		{ "LD H, 0x%02X",				8,	2,	{.op1 = &Z80::LD_H_d8			}},	// 0x26
@@ -778,7 +818,7 @@ Z80::Z80() : instructions({ {
 		{ "JR Z, 0x%02X",				0,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0x28
 		{ "ADD HL, HL",					4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x29
 		{ "LDI A, (HL)",				4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x2a
-		{ "DEC HL",						4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x2b
+		{ "DEC HL",						8,	1,	{.op0 = &Z80::DEC_HL			}},	// 0x2b
 		{ "INC L",						4,	1,	{.op0 = &Z80::INC_L				}},	// 0x2c
 		{ "DEC L",						4,	1,	{.op0 = &Z80::DEC_L				}},	// 0x2d
 		{ "LD L, 0x%02X",				8,	2,	{.op1 = &Z80::LD_L_d8			}},	// 0x2e
@@ -786,7 +826,7 @@ Z80::Z80() : instructions({ {
 		{ "JR NC, 0x%02X",				4,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0x30
 		{ "LD SP, 0x%04X",				12,	3,	{.op2 = &Z80::LD_SP_d16			}},	// 0x31
 		{ "LDD (HL), A",				8,	1,	{.op0 = &Z80::LDD_HLa_A			}},	// 0x32
-		{ "INC SP",						4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x33
+		{ "INC SP",						8,	1,	{.op0 = &Z80::INC_SP			}},	// 0x33
 		{ "INC (HL)",					12,	1,	{.op0 = &Z80::INC_HLa			}},	// 0x34
 		{ "DEC (HL)",					12,	1,	{.op0 = &Z80::DEC_HLa			}},	// 0x35
 		{ "LD (HL), 0x%02X",			6,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0x36
@@ -794,7 +834,7 @@ Z80::Z80() : instructions({ {
 		{ "JR C, 0x%02X",				0,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0x38
 		{ "ADD HL, SP",					4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x39
 		{ "LDD A, (HL)",				4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x3a
-		{ "DEC SP",						4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x3b
+		{ "DEC SP",						8,	1,	{.op0 = &Z80::DEC_SP			}},	// 0x3b
 		{ "INC A",						4,	1,	{.op0 = &Z80::INC_A				}},	// 0x3c
 		{ "DEC A",						4,	1,	{.op0 = &Z80::DEC_A				}},	// 0x3d
 		{ "LD A, 0x%02X",				8,	2,	{.op1 = &Z80::LD_A_d8			}},	// 0x3e
