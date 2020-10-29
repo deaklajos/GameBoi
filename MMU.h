@@ -17,5 +17,12 @@ public:
 	const uint16_t& pc; // TODO Dirty hack
 private:
 	mutable bool isBootROMRunning = true;
+	std::array<uint8_t, 0x100> boot_ROM;
+	std::array<uint8_t, 0x8000> ROM;
+	std::array<uint8_t, 0x2000> VRAM;
+	std::array<uint8_t, 0x2000> ERAM;
+	std::array<uint8_t, 0x4000> WRAM;
+	std::array<uint8_t, 0xA0> OAM;
+	std::array<uint8_t, 0x80> ZRAM;
 };
 

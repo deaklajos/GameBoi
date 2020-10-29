@@ -1,9 +1,11 @@
 #include "MMU.h"
 
+#include <fstream>
 #include "Exceptions.h"
 
 // boot ROM  from: https://gbdev.gg8.se/wiki/articles/Gameboy_Bootstrap_ROM
-static uint8_t boot_ROM[] = {
+MMU::MMU(const uint16_t& pc) :pc{ pc },
+boot_ROM{
 	0x31, 0xFE, 0xFF, 0xAF, 0x21, 0xFF, 0x9F, 0x32, 0xCB, 0x7C, 0x20, 0xFB, 0x21, 0x26, 0xFF, 0x0E,
 	0x11, 0x3E, 0x80, 0x32, 0xE2, 0x0C, 0x3E, 0xF3, 0xE2, 0x32, 0x3E, 0x77, 0x77, 0x3E, 0xFC, 0xE0,
 	0x47, 0x11, 0x04, 0x01, 0x21, 0x10, 0x80, 0x1A, 0xCD, 0x95, 0x00, 0xCD, 0x96, 0x00, 0x13, 0x7B,
@@ -20,10 +22,18 @@ static uint8_t boot_ROM[] = {
 	0xDD, 0xDC, 0x99, 0x9F, 0xBB, 0xB9, 0x33, 0x3E, 0x3c, 0x42, 0xB9, 0xA5, 0xB9, 0xA5, 0x42, 0x4C,
 	0x21, 0x04, 0x01, 0x11, 0xA8, 0x00, 0x1A, 0x13, 0xBE, 0x20, 0xFE, 0x23, 0x7D, 0xFE, 0x34, 0x20,
 	0xF5, 0x06, 0x19, 0x78, 0x86, 0x23, 0x05, 0x20, 0xFB, 0x86, 0x20, 0xFE, 0x3E, 0x01, 0xE0, 0x50
-};
-
-MMU::MMU(const uint16_t& pc) :pc(pc)
+}
 {
+	std::ifstream infile("tetris.gb");
+
+	infile.seekg(0, std::ios::end);
+	size_t length = infile.tellg();
+	infile.seekg(0, std::ios::beg);
+
+	if (length > ROM.size())
+		throw std::logic_error("Banking not yet supported!");
+
+	infile.read((char*)ROM.data(), length);
 }
 
 MMU::~MMU()
@@ -32,24 +42,171 @@ MMU::~MMU()
 
 uint8_t MMU::read_8(uint16_t address) const
 {
-	if (isBootROMRunning)
+	switch (address & 0xF000)
 	{
-		if (address < 256)
-			return boot_ROM[address];
-		else if (pc == 256) {
-			throw std::logic_error("YEEEHAAAA!");
-			isBootROMRunning = false;
+	case 0x0000:
+		if (isBootROMRunning)
+		{
+			if (address < 0x0100)
+				return boot_ROM[address];
+			else if (pc == 0x0100)
+			{
+				throw std::logic_error("YEEEHAAAA!");
+				isBootROMRunning = false;
+			}
+		}
+
+		return ROM[address];
+
+	// ROM0
+	case 0x1000:
+	case 0x2000:
+	case 0x3000:
+		return ROM[address];
+
+	// ROM1
+	case 0x4000:
+	case 0x5000:
+	case 0x6000:
+	case 0x7000:
+		return ROM[address];
+
+	case 0x8000:
+	case 0x9000:
+		return VRAM[address & 0x1FFF];
+
+	case 0xA000:
+	case 0xB000:
+		return ERAM[address & 0x1FFF];
+
+	case 0xC000:
+	case 0xD000:
+		return WRAM[address & 0x1FFF];
+
+	// Shadow
+	case 0xE000:
+		return WRAM[address & 0x1FFF];
+
+	case 0xF000:
+		switch (address & 0x0F00)
+		{
+		// Shadow
+		case 0x000: case 0x100: case 0x200: case 0x300:
+		case 0x400: case 0x500: case 0x600: case 0x700:
+		case 0x800: case 0x900: case 0xA00: case 0xB00:
+		case 0xC00: case 0xD00:
+			return WRAM[address & 0x1FFF];
+
+		case 0xE00:
+			if (address < 0xFEA0)
+			{
+				return OAM[address & 0x9F];
+			}
+			else
+			{
+				throw std::logic_error("hhhmm?");
+				return 0;
+			}
+
+		case 0xF00:
+			if (address >= 0xFF80)
+			{
+				return ZRAM[address & 0x7F];
+			}
+			else
+			{
+				// I/O
+				throw std::logic_error("unhandled");
+				return 0;
+			}
 		}
 	}
 
-	UNIMPLEMENTED();
-	return uint8_t();
+	throw std::logic_error("hhhmm?");
+	return 0;
 }
 
 void MMU::write_8(uint16_t address, uint8_t data)
 {
-	// just trying out stuff
-	//UNIMPLEMENTED();
+	switch (address & 0xF000)
+	{
+	// ROM0
+	case 0x0000:
+	case 0x1000:
+	case 0x2000:
+	case 0x3000:
+		throw std::logic_error("hhhmm?");
+		ROM[address] = data;
+		return;
+
+	// ROM1
+	case 0x4000:
+	case 0x5000:
+	case 0x6000:
+	case 0x7000:
+		throw std::logic_error("hhhmm?");
+		ROM[address] = data;
+		return;
+
+	case 0x8000:
+	case 0x9000:
+		VRAM[address & 0x1FFF] = data;
+		return;
+
+	case 0xA000:
+	case 0xB000:
+		ERAM[address & 0x1FFF] = data;
+		return;
+
+	case 0xC000:
+	case 0xD000:
+		WRAM[address & 0x1FFF] = data;
+		return;
+
+	// Shadow
+	case 0xE000:
+		WRAM[address & 0x1FFF] = data;
+		return;
+
+	case 0xF000:
+		switch (address & 0x0F00)
+		{
+		// Shadow
+		case 0x000: case 0x100: case 0x200: case 0x300:
+		case 0x400: case 0x500: case 0x600: case 0x700:
+		case 0x800: case 0x900: case 0xA00: case 0xB00:
+		case 0xC00: case 0xD00:
+			WRAM[address & 0x1FFF] = data;
+			return;
+
+		case 0xE00:
+			if (address < 0xFEA0)
+			{
+				OAM[address & 0x9F] = data;
+				return;
+			}
+			else
+			{
+				throw std::logic_error("hhhmm?");
+				return;
+			}
+
+		case 0xF00:
+			if (address >= 0xFF80)
+			{
+				ZRAM[address & 0x7F] = data;
+				return;
+			}
+			else
+			{
+				// I/O
+				//throw std::logic_error("unhandled");
+				return;
+			}
+		}
+	}
+
+	throw std::logic_error("hhhmm?");
 }
 
 uint16_t MMU::read_16(uint16_t address) const
