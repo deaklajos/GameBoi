@@ -1178,7 +1178,8 @@ Z80::Z80() : instructions({ {
 		{ "CP 0x%02X",					8,	2,	{.op1 = &Z80::CP_d8				}},	// 0xfe
 		{ "RST 0x38",					8,	1,	{.op0 = &Z80::unimplemented_op0 }}	// 0xff
 	} }),
-	memory(registers.pc)
+	memory(registers.pc),
+	gpu(cycles)
 {
 	Reset();
 }
@@ -1218,4 +1219,6 @@ void Z80::Clock()
 		throw std::logic_error("Wrong instruction length!");
 
 	cycles += instruction.cycleCount;
+
+	gpu.Clock();
 }

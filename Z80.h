@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <array>
 #include "MMU.h"
+#include "GPU.h"
 
 class Z80
 {
@@ -163,6 +164,7 @@ private:
 
 private:
 	MMU memory;
+	GPU gpu;
 
 	struct Instruction {
 		const char* name;

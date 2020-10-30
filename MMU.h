@@ -14,7 +14,7 @@ public:
 	uint16_t read_16(uint16_t address) const;
 	void write_16(uint16_t address, uint16_t data);
 
-	const uint16_t& pc; // TODO Dirty hack
+	const uint16_t& const pc; // TODO Dirty hack
 private:
 	mutable bool isBootROMRunning = true;
 	std::array<uint8_t, 0x100> boot_ROM;
