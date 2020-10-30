@@ -116,7 +116,7 @@ uint8_t MMU::read_8(uint16_t address) const
 			else
 			{
 				// I/O
-				throw std::logic_error("unhandled");
+				//throw std::logic_error("unhandled");
 				return 0;
 			}
 		}
