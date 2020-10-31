@@ -21,5 +21,5 @@ void Display::Show() {
 }
 
 void Display::Update(uint8_t x, uint8_t y, uint8_t value) {
-	frameBuffer.at<uint8_t>(x, y) = value;
+	frameBuffer.at<uint8_t>(y, x) = value;
 }

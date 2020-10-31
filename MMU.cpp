@@ -4,7 +4,7 @@
 #include "Exceptions.h"
 
 // boot ROM  from: https://gbdev.gg8.se/wiki/articles/Gameboy_Bootstrap_ROM
-MMU::MMU(const uint16_t& const pc) :pc{ pc },
+MMU::MMU(const uint16_t& pc) :pc{ pc },
 boot_ROM{
 	0x31, 0xFE, 0xFF, 0xAF, 0x21, 0xFF, 0x9F, 0x32, 0xCB, 0x7C, 0x20, 0xFB, 0x21, 0x26, 0xFF, 0x0E,
 	0x11, 0x3E, 0x80, 0x32, 0xE2, 0x0C, 0x3E, 0xF3, 0xE2, 0x32, 0x3E, 0x77, 0x77, 0x3E, 0xFC, 0xE0,
@@ -24,6 +24,9 @@ boot_ROM{
 	0xF5, 0x06, 0x19, 0x78, 0x86, 0x23, 0x05, 0x20, 0xFB, 0x86, 0x20, 0xFE, 0x3E, 0x01, 0xE0, 0x50
 }
 {
+	backgroundPalette.value = 0;
+	gpuControl.value = 0;
+
 	std::ifstream infile("tetris.gb");
 
 	infile.seekg(0, std::ios::end);
@@ -116,7 +119,19 @@ uint8_t MMU::read_8(uint16_t address) const
 			else
 			{
 				// I/O
-				//throw std::logic_error("unhandled");
+				switch (address)
+				{
+				case 0xFF40:
+					return gpuControl.value;
+				case 0xFF42:
+					return scrollY;
+				case 0xFF43:
+					return scrollX;
+				case 0xFF44:
+					return line;
+				}
+
+				throw std::logic_error("unhandled");
 				return 0;
 			}
 		}
@@ -200,6 +215,29 @@ void MMU::write_8(uint16_t address, uint8_t data)
 			else
 			{
 				// I/O
+				switch (address)
+				{
+				case 0xFF26:
+					// Sound ON/OFF
+					return;
+
+				case 0xFF40:
+					gpuControl.value = data;
+					return;
+
+				case 0xFF42:
+					scrollY = data;
+					return;
+
+				case 0xFF43:
+					scrollX = data;
+					return;
+
+				case 0xFF47:
+					backgroundPalette.value = data;
+					return;
+				}
+
 				//throw std::logic_error("unhandled");
 				return;
 			}

@@ -1179,7 +1179,7 @@ Z80::Z80() : instructions({ {
 		{ "RST 0x38",					8,	1,	{.op0 = &Z80::unimplemented_op0 }}	// 0xff
 	} }),
 	memory(registers.pc),
-	gpu(cycles)
+	gpu(cycles, memory)
 {
 	Reset();
 }
