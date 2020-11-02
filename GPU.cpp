@@ -70,7 +70,7 @@ void GPU::ScanLine()
 	uint16_t mapOffset = memory.gpuControl.backgroundTileMap ? 0x1C00 : 0x1800;
 
 	// TODO could "memory.line + memory.scrollY" overflow?
-	uint16_t yTileOffset = ((memory.line + memory.scrollY) & 255) / 8;
+	uint16_t yTileOffset = ((memory.line + memory.scrollY) & 255) / 8 * 32;
 
 	for (uint16_t column = 0; column < 160; column++)
 	{
@@ -80,7 +80,8 @@ void GPU::ScanLine()
 		uint16_t xOffset = (memory.scrollX + column) & 7;
 
 		uint16_t tileIndex = memory.VRAM[mapOffset + yTileOffset + xTileOffset];
-		if (memory.gpuControl.backgroundTileSet == 1)
+
+		if (memory.gpuControl.backgroundTileSet == 0)
 			if (tileIndex < 128)
 				tileIndex += 256;
 
