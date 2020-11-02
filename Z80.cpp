@@ -873,6 +873,176 @@ inline void Z80::cp(uint8_t value)
 		registers.f &= ~CARRY_FLAG;	// CLEAR
 }
 
+inline void Z80::add(uint8_t value)
+{
+	if ((registers.a + value) < registers.a)
+		registers.f |= CARRY_FLAG;	// SET
+	else
+		registers.f &= ~CARRY_FLAG;	// CLEAR
+
+	if (((registers.a + value) & 0x0f) < (registers.a & 0x0f))
+		registers.f |= HALF_CARRY_FLAG;	// SET
+	else
+		registers.f &= ~HALF_CARRY_FLAG;	// CLEAR
+
+	registers.a += value;
+
+	if (registers.a == 0)
+		registers.f |= ZERO_FLAG;	// SET
+	else
+		registers.f &= ~ZERO_FLAG;	// CLEAR
+
+	registers.f &= ~SUBTRACT_FLAG;	// CLEAR
+}
+
+inline void Z80::adc(uint8_t value)
+{
+	const uint8_t carry = (registers.f & CARRY_FLAG) ? 1 : 0; // TODO clear up flags and use bitfields
+	add(value + carry);
+}
+
+void Z80::ADD_A_B(void)
+{
+	add(registers.b);
+}
+
+void Z80::ADD_A_C(void)
+{
+	add(registers.c);
+}
+
+void Z80::ADD_A_D(void)
+{
+	add(registers.d);
+}
+
+
+void Z80::ADD_A_E(void)
+{
+	add(registers.e);
+}
+
+
+void Z80::ADD_A_H(void)
+{
+	add(registers.h);
+}
+
+
+void Z80::ADD_A_L(void)
+{
+	add(registers.l);
+}
+
+void Z80::ADD_A_HLa(void)
+{
+	add(memory.read_8(registers.hl));
+}
+
+void Z80::ADD_A_A(void)
+{
+	add(registers.a);
+}
+
+void Z80::ADC_A_B(void)
+{
+	adc(registers.b);
+}
+
+void Z80::ADC_A_C(void)
+{
+	adc(registers.c);
+}
+
+void Z80::ADC_A_D(void)
+{
+	adc(registers.d);
+}
+
+
+void Z80::ADC_A_E(void)
+{
+	adc(registers.e);
+}
+
+
+void Z80::ADC_A_H(void)
+{
+	adc(registers.h);
+}
+
+
+void Z80::ADC_A_L(void)
+{
+	adc(registers.l);
+}
+
+void Z80::ADC_A_HLa(void)
+{
+	adc(memory.read_8(registers.hl));
+}
+
+void Z80::ADC_A_A(void)
+{
+	adc(registers.a);
+}
+
+void Z80::ADD_A_d8(uint8_t value)
+{
+	add(value);
+}
+
+void Z80::ADC_A_d8(uint8_t value)
+{
+	adc(value);
+}
+
+inline void Z80::sub(uint8_t value)
+{
+	cp(value);
+	registers.a -= value;
+}
+
+void Z80::SUB_B(void)
+{
+	sub(registers.b);
+}
+
+void Z80::SUB_C(void)
+{
+	sub(registers.c);
+}
+
+void Z80::SUB_D(void)
+{
+	sub(registers.d);
+}
+
+void Z80::SUB_E(void)
+{
+	sub(registers.e);
+}
+
+void Z80::SUB_H(void)
+{
+	sub(registers.h);
+}
+
+void Z80::SUB_L(void)
+{
+	sub(registers.l);
+}
+
+void Z80::SUB_HLa(void)
+{
+	sub(memory.read_8(registers.hl));
+}
+
+void Z80::SUB_A(void)
+{
+	sub(registers.a);
+}
+
 void Z80::CP_B(void)
 {
 	cp(registers.b);
@@ -1049,30 +1219,30 @@ Z80::Z80() : instructions({ {
 		{ "LD A, L",					4,	1,	{.op0 = &Z80::LD_A_L			}},	// 0x7d
 		{ "LD A, (HL)",					8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x7e
 		{ "LD A, A",					4,	1,	{.op0 = &Z80::NOP				}},	// 0x7f
-		{ "ADD A, B",					2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x80
-		{ "ADD A, C",					2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x81
-		{ "ADD A, D",					2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x82
-		{ "ADD A, E",					2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x83
-		{ "ADD A, H",					2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x84
-		{ "ADD A, L",					2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x85
-		{ "ADD A, (HL)",				4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x86
-		{ "ADD A",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x87
-		{ "ADC B",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x88
-		{ "ADC C",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x89
-		{ "ADC D",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x8a
-		{ "ADC E",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x8b
-		{ "ADC H",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x8c
-		{ "ADC L",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x8d
-		{ "ADC (HL)",					4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x8e
-		{ "ADC A",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x8f
-		{ "SUB B",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x90
-		{ "SUB C",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x91
-		{ "SUB D",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x92
-		{ "SUB E",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x93
-		{ "SUB H",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x94
-		{ "SUB L",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x95
-		{ "SUB (HL)",					4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x96
-		{ "SUB A",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x97
+		{ "ADD A, B",					4,	1,	{.op0 = &Z80::ADD_A_B			}},	// 0x80
+		{ "ADD A, C",					4,	1,	{.op0 = &Z80::ADD_A_C			}},	// 0x81
+		{ "ADD A, D",					4,	1,	{.op0 = &Z80::ADD_A_D			}},	// 0x82
+		{ "ADD A, E",					4,	1,	{.op0 = &Z80::ADD_A_E			}},	// 0x83
+		{ "ADD A, H",					4,	1,	{.op0 = &Z80::ADD_A_H			}},	// 0x84
+		{ "ADD A, L",					4,	1,	{.op0 = &Z80::ADD_A_L			}},	// 0x85
+		{ "ADD A, (HL)",				8,	1,	{.op0 = &Z80::ADD_A_HLa			}},	// 0x86
+		{ "ADD A",						4,	1,	{.op0 = &Z80::ADD_A_A			}},	// 0x87
+		{ "ADC B",						4,	1,	{.op0 = &Z80::ADC_A_B			}},	// 0x88
+		{ "ADC C",						4,	1,	{.op0 = &Z80::ADC_A_C			}},	// 0x89
+		{ "ADC D",						4,	1,	{.op0 = &Z80::ADC_A_D			}},	// 0x8a
+		{ "ADC E",						4,	1,	{.op0 = &Z80::ADC_A_E			}},	// 0x8b
+		{ "ADC H",						4,	1,	{.op0 = &Z80::ADC_A_H			}},	// 0x8c
+		{ "ADC L",						4,	1,	{.op0 = &Z80::ADC_A_L			}},	// 0x8d
+		{ "ADC (HL)",					8,	1,	{.op0 = &Z80::ADC_A_HLa			}},	// 0x8e
+		{ "ADC A",						4,	1,	{.op0 = &Z80::ADC_A_A			}},	// 0x8f
+		{ "SUB B",						4,	1,	{.op0 = &Z80::SUB_B				}},	// 0x90
+		{ "SUB C",						4,	1,	{.op0 = &Z80::SUB_C				}},	// 0x91
+		{ "SUB D",						4,	1,	{.op0 = &Z80::SUB_D				}},	// 0x92
+		{ "SUB E",						4,	1,	{.op0 = &Z80::SUB_E				}},	// 0x93
+		{ "SUB H",						4,	1,	{.op0 = &Z80::SUB_H				}},	// 0x94
+		{ "SUB L",						4,	1,	{.op0 = &Z80::SUB_L				}},	// 0x95
+		{ "SUB (HL)",					8,	1,	{.op0 = &Z80::SUB_HLa			}},	// 0x96
+		{ "SUB A",						4,	1,	{.op0 = &Z80::SUB_A				}},	// 0x97
 		{ "SBC B",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x98
 		{ "SBC C",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x99
 		{ "SBC D",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x9a
@@ -1119,7 +1289,7 @@ Z80::Z80() : instructions({ {
 		{ "JP 0x%04X",					6,	3,	{.op2 = &Z80::unimplemented_op2 }},	// 0xc3
 		{ "CALL NZ, 0x%04X",			0,	3,	{.op2 = &Z80::CALL_NZ			}},	// 0xc4
 		{ "PUSH BC",					16,	1,	{.op0 = &Z80::PUSH_BC			}},	// 0xc5
-		{ "ADD A, 0x%02X",				4,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0xc6
+		{ "ADD A, 0x%02X",				8,	2,	{.op1 = &Z80::ADD_A_d8			}},	// 0xc6
 		{ "RST 0x00",					8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xc7
 		{ "RET Z",						0,	1,	{.op0 = &Z80::RET_Z				}},	// 0xc8
 		{ "RET",						16,	1,	{.op0 = &Z80::RET				}},	// 0xc9
@@ -1127,7 +1297,7 @@ Z80::Z80() : instructions({ {
 		{ "CB %02X",					0,	2,	{.op1 = &Z80::PREFIX			}},	// 0xcb
 		{ "CALL Z, 0x%04X",				0,	3,	{.op2 = &Z80::CALL_Z			}},	// 0xcc
 		{ "CALL 0x%04X",				24,	3,	{.op2 = &Z80::CALL				}},	// 0xcd
-		{ "ADC 0x%02X",					4,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0xce
+		{ "ADC 0x%02X",					8,	2,	{.op1 = &Z80::ADC_A_d8			}},	// 0xce
 		{ "RST 0x08",					8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xcf
 		{ "RET NC",						0,	1,	{.op0 = &Z80::RET_NC			}},	// 0xd0
 		{ "POP DE",						12,	1,	{.op0 = &Z80::POP_DE			}},	// 0xd1
