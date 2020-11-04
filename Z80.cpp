@@ -613,14 +613,70 @@ void Z80::PREFIX(uint8_t instuction)
 	}
 }
 
+inline void Z80::and_(uint8_t value)
+{
+	registers.a &= value;
+
+	registers.f = HALF_CARRY_FLAG; // SET+CLEAR
+
+	if (registers.a == 0)
+		registers.f |= ZERO_FLAG; // SET
+
+}
+
+void Z80::AND_B(void)
+{
+	and_(registers.b);
+}
+
+void Z80::AND_C(void)
+{
+	and_(registers.c);
+}
+
+void Z80::AND_D(void)
+{
+	and_(registers.d);
+}
+
+void Z80::AND_E(void)
+{
+	and_(registers.e);
+}
+
+void Z80::AND_H(void)
+{
+	and_(registers.h);
+}
+
+void Z80::AND_L(void)
+{
+	and_(registers.l);
+}
+
+void Z80::AND_HLa(void)
+{
+	and_(memory.read_8(registers.hl));
+}
+
+void Z80::AND_A(void)
+{
+	and_(registers.a);
+}
+
+void Z80::AND_d8(uint8_t value)
+{
+	and_(value);
+}
+
 inline void Z80::xor_(uint8_t value)
 {
 	registers.a ^= value;
 
 	if (registers.a == 0)
-		registers.f = ZERO_FLAG;
+		registers.f = ZERO_FLAG; // SET+CLEAR
 	else
-		registers.f = 0;
+		registers.f = 0; // CLEAR
 }
 
 void Z80::XOR_B(void)
@@ -1446,14 +1502,14 @@ Z80::Z80() : instructions({ {
 		{ "SBC L",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x9d
 		{ "SBC (HL)",					4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x9e
 		{ "SBC A",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x9f
-		{ "AND B",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xa0
-		{ "AND C",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xa1
-		{ "AND D",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xa2
-		{ "AND E",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xa3
-		{ "AND H",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xa4
-		{ "AND L",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xa5
-		{ "AND (HL)",					4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xa6
-		{ "AND A",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xa7
+		{ "AND B",						4,	1,	{.op0 = &Z80::AND_B				}},	// 0xa0
+		{ "AND C",						4,	1,	{.op0 = &Z80::AND_C				}},	// 0xa1
+		{ "AND D",						4,	1,	{.op0 = &Z80::AND_D				}},	// 0xa2
+		{ "AND E",						4,	1,	{.op0 = &Z80::AND_E				}},	// 0xa3
+		{ "AND H",						4,	1,	{.op0 = &Z80::AND_H				}},	// 0xa4
+		{ "AND L",						4,	1,	{.op0 = &Z80::AND_L				}},	// 0xa5
+		{ "AND (HL)",					8,	1,	{.op0 = &Z80::AND_HLa			}},	// 0xa6
+		{ "AND A",						4,	1,	{.op0 = &Z80::AND_A				}},	// 0xa7
 		{ "XOR B",						4,	1,	{.op0 = &Z80::XOR_B				}},	// 0xa8
 		{ "XOR C",						4,	1,	{.op0 = &Z80::XOR_C				}},	// 0xa9
 		{ "XOR D",						4,	1,	{.op0 = &Z80::XOR_D				}},	// 0xaa
@@ -1516,7 +1572,7 @@ Z80::Z80() : instructions({ {
 		{ "UNKNOWN",					0,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xe3
 		{ "UNKNOWN",					0,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xe4
 		{ "PUSH HL",					16,	1,	{.op0 = &Z80::POP_HL			}},	// 0xe5
-		{ "AND 0x%02X",					4,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0xe6
+		{ "AND 0x%02X",					8,	2,	{.op1 = &Z80::AND_d8			}},	// 0xe6
 		{ "RST 0x20",					8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xe7
 		{ "ADD SP,0x%02X",				8,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0xe8
 		{ "JP HL",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xe9

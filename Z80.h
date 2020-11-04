@@ -118,6 +118,16 @@ private:
 	void LD_A_L(void);
 	void LD_A_HLa(void);
 	void PREFIX(uint8_t instuction);
+	inline void and_(uint8_t value);
+	void AND_B(void);
+	void AND_C(void);
+	void AND_D(void);
+	void AND_E(void);
+	void AND_H(void);
+	void AND_L(void);
+	void AND_HLa(void);
+	void AND_A(void);
+	void AND_d8(uint8_t value);
 	inline void xor_(uint8_t value);
 	void XOR_B(void);
 	void XOR_C(void);
@@ -127,7 +137,7 @@ private:
 	void XOR_L(void);
 	void XOR_HLa(void);
 	void XOR_A(void);
-	void or_(uint8_t value);
+	inline void or_(uint8_t value);
 	void OR_B(void);
 	void OR_C(void);
 	void OR_D(void);
