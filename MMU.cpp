@@ -95,19 +95,16 @@ uint8_t MMU::read_8(uint16_t address) const
 			return WRAM[address & 0x1FFF];
 
 		case 0xE00:
-			if (address < 0xFEA0)
-			{
+			if (address < 0xFEA0) {
 				return OAM[address & 0x9F];
 			}
-			else
-			{
+			else {
 				throw std::logic_error("hhhmm?");
 				return 0;
 			}
 
 		case 0xF00:
-			if (address >= 0xFF80)
-			{
+			if (address >= 0xFF80) {
 				return ZRAM[address & 0x7F];
 			}
 			else
@@ -146,8 +143,8 @@ void MMU::write_8(uint16_t address, uint8_t data)
 	case 0x1000:
 	case 0x2000:
 	case 0x3000:
-		throw std::logic_error("hhhmm?");
-		ROM[address] = data;
+		//throw std::logic_error("hhhmm?");
+		//ROM[address] = data;
 		return;
 
 	// ROM1
@@ -155,8 +152,8 @@ void MMU::write_8(uint16_t address, uint8_t data)
 	case 0x5000:
 	case 0x6000:
 	case 0x7000:
-		throw std::logic_error("hhhmm?");
-		ROM[address] = data;
+		//throw std::logic_error("hhhmm?");
+		//ROM[address] = data;
 		return;
 
 	case 0x8000:
@@ -191,20 +188,17 @@ void MMU::write_8(uint16_t address, uint8_t data)
 			return;
 
 		case 0xE00:
-			if (address < 0xFEA0)
-			{
+			if (address < 0xFEA0) {
 				OAM[address & 0x9F] = data;
 				return;
 			}
-			else
-			{
-				throw std::logic_error("hhhmm?");
+			else {
+				// Unused
 				return;
 			}
 
 		case 0xF00:
-			if (address >= 0xFF80)
-			{
+			if (address >= 0xFF80) {
 				ZRAM[address & 0x7F] = data;
 				return;
 			}

@@ -56,6 +56,18 @@ void Z80::LDI_HLa_A(void)
 	registers.hl++;
 }
 
+void Z80::LDD_A_HLa(void)
+{
+	registers.a = memory.read_8(registers.hl);
+	registers.hl--;
+}
+
+void Z80::LDI_A_HLa(void)
+{
+	registers.a = memory.read_8(registers.hl);
+	registers.hl++;
+}
+
 void Z80::LD_A_BCa(void)
 {
 	registers.a = memory.read_8(registers.bc);
@@ -1215,7 +1227,7 @@ Z80::Z80() : instructions({ {
 		{ "DAA",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x27
 		{ "JR Z, 0x%02X",				0,	2,	{.op1 = &Z80::JR_Z				}},	// 0x28
 		{ "ADD HL, HL",					4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x29
-		{ "LDI A, (HL)",				4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x2a
+		{ "LDI A, (HL)",				8,	1,	{.op0 = &Z80::LDI_A_HLa			}},	// 0x2a
 		{ "DEC HL",						8,	1,	{.op0 = &Z80::DEC_HL			}},	// 0x2b
 		{ "INC L",						4,	1,	{.op0 = &Z80::INC_L				}},	// 0x2c
 		{ "DEC L",						4,	1,	{.op0 = &Z80::DEC_L				}},	// 0x2d
@@ -1231,7 +1243,7 @@ Z80::Z80() : instructions({ {
 		{ "SCF",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x37
 		{ "JR C, 0x%02X",				0,	2,	{.op1 = &Z80::JR_C				}},	// 0x38
 		{ "ADD HL, SP",					4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x39
-		{ "LDD A, (HL)",				4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x3a
+		{ "LDD A, (HL)",				8,	1,	{.op0 = &Z80::LDD_A_HLa			}},	// 0x3a
 		{ "DEC SP",						8,	1,	{.op0 = &Z80::DEC_SP			}},	// 0x3b
 		{ "INC A",						4,	1,	{.op0 = &Z80::INC_A				}},	// 0x3c
 		{ "DEC A",						4,	1,	{.op0 = &Z80::DEC_A				}},	// 0x3d
