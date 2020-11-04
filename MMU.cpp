@@ -27,16 +27,18 @@ boot_ROM{
 	backgroundPalette.value = 0;
 	gpuControl.value = 0;
 
-	std::ifstream infile("tetris.gb");
+	if (std::ifstream infile{ "tetris.gb", std::ios::binary | std::ios::ate }) {
+		auto size = infile.tellg();
 
-	infile.seekg(0, std::ios::end);
-	size_t length = infile.tellg();
-	infile.seekg(0, std::ios::beg);
+		if (size > ROM.size())
+			throw std::logic_error("Banking not yet supported!");
 
-	if (length > ROM.size())
-		throw std::logic_error("Banking not yet supported!");
-
-	infile.read((char*)ROM.data(), length);
+		infile.seekg(0);
+		if (!infile.read((char*)ROM.data(), size))
+			throw std::logic_error("File read error!");
+	}
+	else
+		throw std::logic_error("File open error!");
 }
 
 MMU::~MMU()
@@ -113,6 +115,8 @@ uint8_t MMU::read_8(uint16_t address) const
 				// I/O
 				switch (address)
 				{
+				case 0xFF00: // gamepad
+					return /*0b00101111*/ 0;
 				case 0xFF40:
 					return gpuControl.value;
 				case 0xFF42:
