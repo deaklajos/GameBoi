@@ -116,7 +116,7 @@ uint8_t MMU::read_8(uint16_t address) const
 				switch (address)
 				{
 				case 0xFF00: // gamepad
-					return /*0b00101111*/ 0;
+					return 0b00101111;
 				case 0xFF40:
 					return gpuControl.value;
 				case 0xFF42:

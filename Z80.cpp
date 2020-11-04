@@ -1125,6 +1125,11 @@ void Z80::CP_d8(uint8_t value)
 	cp(value);
 }
 
+void Z80::DI(void)
+{
+	/*throw std::logic_error("Unimplemented!");*/
+}
+
 // TODO CLEAN UP INSTRUCTION TIMING AND USE T CYCLES!!!
 // instruction table is a modified version of: https://cturt.github.io/cinoop.html
 Z80::Z80() : instructions({ {
@@ -1371,7 +1376,7 @@ Z80::Z80() : instructions({ {
 		{ "LD A, (0xFF00 + 0x%02X)",	12,	2,	{.op1 = &Z80::LD_FF_A_a8		}},	// 0xf0
 		{ "POP AF",						12,	1,	{.op0 = &Z80::POP_AF			}},	// 0xf1
 		{ "LD A, (0xFF00 + C)",			8,	1,	{.op0 = &Z80::LD_FF_A_Ca		}},	// 0xf2
-		{ "DI",							2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xf3
+		{ "DI",							4,	1,	{.op0 = &Z80::DI				}},	// 0xf3
 		{ "UNKNOWN",					0,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xf4
 		{ "PUSH AF",					16,	1,	{.op0 = &Z80::PUSH_AF			}},	// 0xf5
 		{ "OR 0x%02X",					4,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0xf6

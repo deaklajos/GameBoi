@@ -190,6 +190,7 @@ private:
 	void CP_HLa(void);
 	void CP_A(void);
 	void CP_d8(uint8_t value);
+	void DI(void);
 	void unimplemented_op0(void);
 	void unimplemented_op1(uint8_t);
 	void unimplemented_op2(uint16_t);
