@@ -1277,6 +1277,12 @@ void Z80::EI(void)
 	/*throw std::logic_error("Unimplemented!");*/
 }
 
+void Z80::CPL(void)
+{
+	registers.a = ~registers.a;
+	registers.f |= (SUBTRACT_FLAG | HALF_CARRY_FLAG);
+}
+
 // TODO CLEAN UP INSTRUCTION TIMING AND USE T CYCLES!!!
 // instruction table is a modified version of: https://cturt.github.io/cinoop.html
 Z80::Z80() : instructions({ {
@@ -1327,7 +1333,7 @@ Z80::Z80() : instructions({ {
 		{ "INC L",						4,	1,	{.op0 = &Z80::INC_L				}},	// 0x2c
 		{ "DEC L",						4,	1,	{.op0 = &Z80::DEC_L				}},	// 0x2d
 		{ "LD L, 0x%02X",				8,	2,	{.op1 = &Z80::LD_L_d8			}},	// 0x2e
-		{ "CPL",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x2f
+		{ "CPL",						4,	1,	{.op0 = &Z80::CPL				}},	// 0x2f
 		{ "JR NC, 0x%02X",				0,	2,	{.op1 = &Z80::JR_NC				}},	// 0x30
 		{ "LD SP, 0x%04X",				12,	3,	{.op2 = &Z80::LD_SP_d16			}},	// 0x31
 		{ "LDD (HL), A",				8,	1,	{.op0 = &Z80::LDD_HLa_A			}},	// 0x32
