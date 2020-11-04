@@ -66,6 +66,11 @@ void Z80::LD_A_DEa(void)
 	registers.a = memory.read_8(registers.de);
 }
 
+void Z80::LD_HLa_d8(uint8_t data)
+{
+	memory.write_8(registers.hl, data);
+}
+
 // is this required?
 // bitfields maybe?
 #define ZERO_FLAG 0x80u
@@ -321,6 +326,11 @@ void Z80::LD_B_L(void)
 	registers.b = registers.l;
 }
 
+void Z80::LD_B_HLa(void)
+{
+	registers.b = memory.read_8(registers.hl);
+}
+
 void Z80::LD_B_A(void)
 {
 	registers.b = registers.a;
@@ -349,6 +359,11 @@ void Z80::LD_C_H(void)
 void Z80::LD_C_L(void)
 {
 	registers.c = registers.l;
+}
+
+void Z80::LD_C_HLa(void)
+{
+	registers.c = memory.read_8(registers.hl);
 }
 
 void Z80::LD_C_A(void)
@@ -381,6 +396,11 @@ void Z80::LD_D_L(void)
 	registers.d = registers.l;
 }
 
+void Z80::LD_D_HLa(void)
+{
+	registers.d = memory.read_8(registers.hl);
+}
+
 void Z80::LD_D_A(void)
 {
 	registers.d = registers.a;
@@ -409,6 +429,11 @@ void Z80::LD_E_H(void)
 void Z80::LD_E_L(void)
 {
 	registers.e = registers.l;
+}
+
+void Z80::LD_E_HLa(void)
+{
+	registers.e = memory.read_8(registers.hl);
 }
 
 void Z80::LD_E_A(void)
@@ -441,6 +466,11 @@ void Z80::LD_H_L(void)
 	registers.h = registers.l;
 }
 
+void Z80::LD_H_HLa(void)
+{
+	registers.h = memory.read_8(registers.hl);
+}
+
 void Z80::LD_H_A(void)
 {
 	registers.h = registers.a;
@@ -469,6 +499,11 @@ void Z80::LD_L_E(void)
 void Z80::LD_L_H(void)
 {
 	registers.l = registers.h;
+}
+
+void Z80::LD_L_HLa(void)
+{
+	registers.l = memory.read_8(registers.hl);
 }
 
 void Z80::LD_L_A(void)
@@ -504,6 +539,11 @@ void Z80::LD_A_H(void)
 void Z80::LD_A_L(void)
 {
 	registers.a = registers.l;
+}
+
+void Z80::LD_A_HLa(void)
+{
+	registers.a = memory.read_8(registers.hl);
 }
 
 void Z80::PREFIX(uint8_t instuction)
@@ -1187,7 +1227,7 @@ Z80::Z80() : instructions({ {
 		{ "INC SP",						8,	1,	{.op0 = &Z80::INC_SP			}},	// 0x33
 		{ "INC (HL)",					12,	1,	{.op0 = &Z80::INC_HLa			}},	// 0x34
 		{ "DEC (HL)",					12,	1,	{.op0 = &Z80::DEC_HLa			}},	// 0x35
-		{ "LD (HL), 0x%02X",			6,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0x36
+		{ "LD (HL), 0x%02X",			12,	2,	{.op1 = &Z80::LD_HLa_d8			}},	// 0x36
 		{ "SCF",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x37
 		{ "JR C, 0x%02X",				0,	2,	{.op1 = &Z80::JR_C				}},	// 0x38
 		{ "ADD HL, SP",					4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x39
@@ -1203,7 +1243,7 @@ Z80::Z80() : instructions({ {
 		{ "LD B, E",					4,	1,	{.op0 = &Z80::LD_B_E			}},	// 0x43
 		{ "LD B, H",					4,	1,	{.op0 = &Z80::LD_B_H			}},	// 0x44
 		{ "LD B, L",					4,	1,	{.op0 = &Z80::LD_B_L			}},	// 0x45
-		{ "LD B, (HL)",					8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x46
+		{ "LD B, (HL)",					8,	1,	{.op0 = &Z80::LD_B_HLa			}},	// 0x46
 		{ "LD B, A",					4,	1,	{.op0 = &Z80::LD_B_A			}},	// 0x47
 		{ "LD C, B",					4,	1,	{.op0 = &Z80::LD_C_B			}},	// 0x48
 		{ "LD C, C",					4,	1,	{.op0 = &Z80::NOP				}},	// 0x49
@@ -1211,7 +1251,7 @@ Z80::Z80() : instructions({ {
 		{ "LD C, E",					4,	1,	{.op0 = &Z80::LD_C_E			}},	// 0x4b
 		{ "LD C, H",					4,	1,	{.op0 = &Z80::LD_C_H			}},	// 0x4c
 		{ "LD C, L",					4,	1,	{.op0 = &Z80::LD_C_L			}},	// 0x4d
-		{ "LD C, (HL)",					8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x4e
+		{ "LD C, (HL)",					8,	1,	{.op0 = &Z80::LD_C_HLa			}},	// 0x4e
 		{ "LD C, A",					4,	1,	{.op0 = &Z80::LD_C_A			}},	// 0x4f
 		{ "LD D, B",					4,	1,	{.op0 = &Z80::LD_D_B			}},	// 0x50
 		{ "LD D, C",					4,	1,	{.op0 = &Z80::LD_D_C			}},	// 0x51
@@ -1219,7 +1259,7 @@ Z80::Z80() : instructions({ {
 		{ "LD D, E",					4,	1,	{.op0 = &Z80::LD_D_E			}},	// 0x53
 		{ "LD D, H",					4,	1,	{.op0 = &Z80::LD_D_H			}},	// 0x54
 		{ "LD D, L",					4,	1,	{.op0 = &Z80::LD_D_L			}},	// 0x55
-		{ "LD D, (HL)",					8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x56
+		{ "LD D, (HL)",					8,	1,	{.op0 = &Z80::LD_D_HLa			}},	// 0x56
 		{ "LD D, A",					4,	1,	{.op0 = &Z80::LD_D_A			}},	// 0x57
 		{ "LD E, B",					4,	1,	{.op0 = &Z80::LD_E_B			}},	// 0x58
 		{ "LD E, C",					4,	1,	{.op0 = &Z80::LD_E_C			}},	// 0x59
@@ -1227,7 +1267,7 @@ Z80::Z80() : instructions({ {
 		{ "LD E, E",					4,	1,	{.op0 = &Z80::NOP				}},	// 0x5b
 		{ "LD E, H",					4,	1,	{.op0 = &Z80::LD_E_H			}},	// 0x5c
 		{ "LD E, L",					4,	1,	{.op0 = &Z80::LD_E_L			}},	// 0x5d
-		{ "LD E, (HL)",					8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x5e
+		{ "LD E, (HL)",					8,	1,	{.op0 = &Z80::LD_E_HLa			}},	// 0x5e
 		{ "LD E, A",					4,	1,	{.op0 = &Z80::LD_E_A			}},	// 0x5f
 		{ "LD H, B",					4,	1,	{.op0 = &Z80::LD_H_B			}},	// 0x60
 		{ "LD H, C",					4,	1,	{.op0 = &Z80::LD_H_C			}},	// 0x61
@@ -1235,7 +1275,7 @@ Z80::Z80() : instructions({ {
 		{ "LD H, E",					4,	1,	{.op0 = &Z80::LD_H_E			}},	// 0x63
 		{ "LD H, H",					4,	1,	{.op0 = &Z80::NOP				}},	// 0x64
 		{ "LD H, L",					4,	1,	{.op0 = &Z80::LD_H_L			}},	// 0x65
-		{ "LD H, (HL)",					8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x66
+		{ "LD H, (HL)",					8,	1,	{.op0 = &Z80::LD_H_HLa			}},	// 0x66
 		{ "LD H, A",					4,	1,	{.op0 = &Z80::LD_H_A			}},	// 0x67
 		{ "LD L, B",					4,	1,	{.op0 = &Z80::LD_L_B			}},	// 0x68
 		{ "LD L, C",					4,	1,	{.op0 = &Z80::LD_L_C			}},	// 0x69
@@ -1243,7 +1283,7 @@ Z80::Z80() : instructions({ {
 		{ "LD L, E",					4,	1,	{.op0 = &Z80::LD_L_E			}},	// 0x6b
 		{ "LD L, H",					4,	1,	{.op0 = &Z80::LD_L_H			}},	// 0x6c
 		{ "LD L, L",					4,	1,	{.op0 = &Z80::NOP				}},	// 0x6d
-		{ "LD L, (HL)",					8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x6e
+		{ "LD L, (HL)",					8,	1,	{.op0 = &Z80::LD_L_HLa			}},	// 0x6e
 		{ "LD L, A",					4,	1,	{.op0 = &Z80::LD_L_A			}},	// 0x6f
 		{ "LD (HL), B",					8,	1,	{.op0 = &Z80::LD_HLa_B			}},	// 0x70
 		{ "LD (HL), C",					8,	1,	{.op0 = &Z80::LD_HLa_C			}},	// 0x71
@@ -1259,7 +1299,7 @@ Z80::Z80() : instructions({ {
 		{ "LD A, E",					4,	1,	{.op0 = &Z80::LD_A_E			}},	// 0x7b
 		{ "LD A, H",					4,	1,	{.op0 = &Z80::LD_A_H			}},	// 0x7c
 		{ "LD A, L",					4,	1,	{.op0 = &Z80::LD_A_L			}},	// 0x7d
-		{ "LD A, (HL)",					8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x7e
+		{ "LD A, (HL)",					8,	1,	{.op0 = &Z80::LD_A_HLa			}},	// 0x7e
 		{ "LD A, A",					4,	1,	{.op0 = &Z80::NOP				}},	// 0x7f
 		{ "ADD A, B",					4,	1,	{.op0 = &Z80::ADD_A_B			}},	// 0x80
 		{ "ADD A, C",					4,	1,	{.op0 = &Z80::ADD_A_C			}},	// 0x81
