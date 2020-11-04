@@ -613,14 +613,104 @@ void Z80::PREFIX(uint8_t instuction)
 	}
 }
 
-void Z80::XOR_A(void)
+inline void Z80::xor_(uint8_t value)
 {
-	registers.a ^= registers.a;
+	registers.a ^= value;
 
 	if (registers.a == 0)
 		registers.f = ZERO_FLAG;
 	else
 		registers.f = 0;
+}
+
+void Z80::XOR_B(void)
+{
+	xor_(registers.b);
+}
+
+void Z80::XOR_C(void)
+{
+	xor_(registers.c);
+}
+
+void Z80::XOR_D(void)
+{
+	xor_(registers.d);
+}
+
+void Z80::XOR_E(void)
+{
+	xor_(registers.e);
+}
+
+void Z80::XOR_H(void)
+{
+	xor_(registers.h);
+}
+
+void Z80::XOR_L(void)
+{
+	xor_(registers.l);
+}
+
+void Z80::XOR_HLa(void)
+{
+	xor_(memory.read_8(registers.hl));
+}
+
+void Z80::XOR_A(void)
+{
+	xor_(registers.a);
+}
+
+inline void Z80::or_(uint8_t value)
+{
+	registers.a |= value;
+
+	if (registers.a == 0)
+		registers.f = ZERO_FLAG;
+	else
+		registers.f = 0;
+}
+
+void Z80::OR_B(void)
+{
+	or_(registers.b);
+}
+
+void Z80::OR_C(void)
+{
+	or_(registers.c);
+}
+
+void Z80::OR_D(void)
+{
+	or_(registers.d);
+}
+
+void Z80::OR_E(void)
+{
+	or_(registers.e);
+}
+
+void Z80::OR_H(void)
+{
+	or_(registers.h);
+}
+
+void Z80::OR_L(void)
+{
+	or_(registers.l);
+}
+
+void Z80::OR_HLa(void)
+{
+	or_(memory.read_8(registers.hl));
+}
+
+void Z80::OR_A(void)
+{
+	or_(registers.a);
 }
 
 void Z80::RLCA(void)
@@ -1353,22 +1443,22 @@ Z80::Z80() : instructions({ {
 		{ "AND L",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xa5
 		{ "AND (HL)",					4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xa6
 		{ "AND A",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xa7
-		{ "XOR B",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xa8
-		{ "XOR C",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xa9
-		{ "XOR D",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xaa
-		{ "XOR E",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xab
-		{ "XOR H",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xac
-		{ "XOR L",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xad
-		{ "XOR (HL)",					4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xae
+		{ "XOR B",						4,	1,	{.op0 = &Z80::XOR_B				}},	// 0xa8
+		{ "XOR C",						4,	1,	{.op0 = &Z80::XOR_C				}},	// 0xa9
+		{ "XOR D",						4,	1,	{.op0 = &Z80::XOR_D				}},	// 0xaa
+		{ "XOR E",						4,	1,	{.op0 = &Z80::XOR_E				}},	// 0xab
+		{ "XOR H",						4,	1,	{.op0 = &Z80::XOR_H				}},	// 0xac
+		{ "XOR L",						4,	1,	{.op0 = &Z80::XOR_L				}},	// 0xad
+		{ "XOR (HL)",					8,	1,	{.op0 = &Z80::XOR_HLa			}},	// 0xae
 		{ "XOR A",						4,	1,	{.op0 = &Z80::XOR_A				}},	// 0xaf
-		{ "OR B",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xb0
-		{ "OR C",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xb1
-		{ "OR D",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xb2
-		{ "OR E",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xb3
-		{ "OR H",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xb4
-		{ "OR L",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xb5
-		{ "OR (HL)",					4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xb6
-		{ "OR A",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xb7
+		{ "OR B",						4,	1,	{.op0 = &Z80::OR_B				}},	// 0xb0
+		{ "OR C",						4,	1,	{.op0 = &Z80::OR_C				}},	// 0xb1
+		{ "OR D",						4,	1,	{.op0 = &Z80::OR_D				}},	// 0xb2
+		{ "OR E",						4,	1,	{.op0 = &Z80::OR_E				}},	// 0xb3
+		{ "OR H",						4,	1,	{.op0 = &Z80::OR_H				}},	// 0xb4
+		{ "OR L",						4,	1,	{.op0 = &Z80::OR_L				}},	// 0xb5
+		{ "OR (HL)",					8,	1,	{.op0 = &Z80::OR_HLa			}},	// 0xb6
+		{ "OR A",						4,	1,	{.op0 = &Z80::OR_A				}},	// 0xb7
 		{ "CP B",						4,	1,	{.op0 = &Z80::CP_B				}},	// 0xb8
 		{ "CP C",						4,	1,	{.op0 = &Z80::CP_C				}},	// 0xb9
 		{ "CP D",						4,	1,	{.op0 = &Z80::CP_D				}},	// 0xba
