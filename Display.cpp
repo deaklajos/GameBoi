@@ -16,7 +16,7 @@ void Display::Show() {
 	cv::Mat resized;
 	cv::resize(frameBuffer, resized, {}, 4, 4, cv::INTER_NEAREST);
 	cv::imshow(NAME, resized);
-	/*char key = static_cast<char>(*/cv::waitKey(10)/*)*/;
+	/*char key = static_cast<char>(*/cv::waitKey(1)/*)*/;
 	//if (key == 27) { std::cout << "Exiting..." << std::endl; break; }
 }
 
