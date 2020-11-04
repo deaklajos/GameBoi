@@ -119,6 +119,12 @@ private:
 	void JR_Z(uint8_t signed_offset);
 	void JR_NC(uint8_t signed_offset);
 	void JR_C(uint8_t signed_offset);
+	inline void jp(uint16_t address, bool doJump);
+	void JP_16a(uint16_t address);
+	void JP_NZ(uint16_t address);
+	void JP_Z(uint16_t address);
+	void JP_NC(uint16_t address);
+	void JP_C(uint16_t address);
 	void LD_B_d8(uint8_t data);
 	void LD_C_d8(uint8_t data);
 	void LD_D_d8(uint8_t data);

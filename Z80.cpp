@@ -2,6 +2,7 @@
 
 #include <cstring>
 #include <functional>
+#include <iostream>
 #include "Exceptions.h"
 
 
@@ -678,6 +679,42 @@ void Z80::JR_C(uint8_t signed_offset)
 	jr(signed_offset, registers.f & CARRY_FLAG);
 }
 
+inline void Z80::jp(uint16_t address, bool doJump)
+{
+	if (doJump)
+	{
+		registers.pc = address;
+		cycles += 16;
+	}
+	else
+		cycles += 12;
+}
+
+void Z80::JP_16a(uint16_t address)
+{
+	jp(address, true);
+}
+
+void Z80::JP_NZ(uint16_t address)
+{
+	jp(address, !(registers.f & ZERO_FLAG));
+}
+
+void Z80::JP_Z(uint16_t address)
+{
+	jp(address, registers.f & ZERO_FLAG);
+}
+
+void Z80::JP_NC(uint16_t address)
+{
+	jp(address, !(registers.f & CARRY_FLAG));
+}
+
+void Z80::JP_C(uint16_t address)
+{
+	jp(address, registers.f & CARRY_FLAG);
+}
+
 void Z80::LD_B_d8(uint8_t data)
 {
 	registers.b = data;
@@ -1285,15 +1322,15 @@ Z80::Z80() : instructions({ {
 		{ "CP A",						4,	1,	{.op0 = &Z80::CP_A				}},	// 0xbf
 		{ "RET NZ",						0,	1,	{.op0 = &Z80::RET_NZ			}},	// 0xc0
 		{ "POP BC",						12,	1,	{.op0 = &Z80::POP_BC			}},	// 0xc1
-		{ "JP NZ, 0x%04X",				0,	3,	{.op2 = &Z80::unimplemented_op2 }},	// 0xc2
-		{ "JP 0x%04X",					6,	3,	{.op2 = &Z80::unimplemented_op2 }},	// 0xc3
+		{ "JP NZ, 0x%04X",				0,	3,	{.op2 = &Z80::JP_NZ				}},	// 0xc2
+		{ "JP 0x%04X",					0,	3,	{.op2 = &Z80::JP_16a			}},	// 0xc3
 		{ "CALL NZ, 0x%04X",			0,	3,	{.op2 = &Z80::CALL_NZ			}},	// 0xc4
 		{ "PUSH BC",					16,	1,	{.op0 = &Z80::PUSH_BC			}},	// 0xc5
 		{ "ADD A, 0x%02X",				8,	2,	{.op1 = &Z80::ADD_A_d8			}},	// 0xc6
 		{ "RST 0x00",					8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xc7
 		{ "RET Z",						0,	1,	{.op0 = &Z80::RET_Z				}},	// 0xc8
 		{ "RET",						16,	1,	{.op0 = &Z80::RET				}},	// 0xc9
-		{ "JP Z, 0x%04X",				0,	3,	{.op2 = &Z80::unimplemented_op2 }},	// 0xca
+		{ "JP Z, 0x%04X",				0,	3,	{.op2 = &Z80::JP_Z				}},	// 0xca
 		{ "CB %02X",					0,	2,	{.op1 = &Z80::PREFIX			}},	// 0xcb
 		{ "CALL Z, 0x%04X",				0,	3,	{.op2 = &Z80::CALL_Z			}},	// 0xcc
 		{ "CALL 0x%04X",				24,	3,	{.op2 = &Z80::CALL				}},	// 0xcd
@@ -1301,7 +1338,7 @@ Z80::Z80() : instructions({ {
 		{ "RST 0x08",					8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xcf
 		{ "RET NC",						0,	1,	{.op0 = &Z80::RET_NC			}},	// 0xd0
 		{ "POP DE",						12,	1,	{.op0 = &Z80::POP_DE			}},	// 0xd1
-		{ "JP NC, 0x%04X",				0,	3,	{.op2 = &Z80::unimplemented_op2 }},	// 0xd2
+		{ "JP NC, 0x%04X",				0,	3,	{.op2 = &Z80::JP_NC				}},	// 0xd2
 		{ "UNKNOWN",					0,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xd3
 		{ "CALL NC, 0x%04X",			0,	3,	{.op2 = &Z80::CALL_NC			}},	// 0xd4
 		{ "PUSH DE",					16,	1,	{.op0 = &Z80::PUSH_DE			}},	// 0xd5
@@ -1309,7 +1346,7 @@ Z80::Z80() : instructions({ {
 		{ "RST 0x10",					8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xd7
 		{ "RET C",						0,	1,	{.op0 = &Z80::RET_C				}},	// 0xd8
 		{ "RETI",						8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xd9
-		{ "JP C, 0x%04X",				0,	3,	{.op2 = &Z80::unimplemented_op2 }},	// 0xda
+		{ "JP C, 0x%04X",				0,	3,	{.op2 = &Z80::JP_C				}},	// 0xda
 		{ "UNKNOWN",					0,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xdb
 		{ "CALL C, 0x%04X",				0,	3,	{.op2 = &Z80::CALL_C			}},	// 0xdc
 		{ "UNKNOWN",					0,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xdd
@@ -1369,7 +1406,7 @@ void Z80::Clock()
 	uint8_t instructionIndex = memory.read_8(registers.pc);
 	const Instruction& instruction = instructions[instructionIndex];
 	registers.pc++;
-
+	
 	if (instruction.instructionLength == 1) {
 		(this->*instruction.op0)();
 	}
