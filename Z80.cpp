@@ -1253,18 +1253,15 @@ void Z80::ADD_A_D(void)
 	add(registers.d);
 }
 
-
 void Z80::ADD_A_E(void)
 {
 	add(registers.e);
 }
 
-
 void Z80::ADD_A_H(void)
 {
 	add(registers.h);
 }
-
 
 void Z80::ADD_A_L(void)
 {
@@ -1433,6 +1430,54 @@ void Z80::DI(void)
 void Z80::EI(void)
 {
 	/*throw std::logic_error("Unimplemented!");*/
+}
+
+void Z80::RST_0x0000(void)
+{
+	push_16(registers.pc);
+	registers.pc = 0x0000;
+}
+
+void Z80::RST_0x0008(void)
+{
+	push_16(registers.pc);
+	registers.pc = 0x0008;
+}
+
+void Z80::RST_0x0010(void)
+{
+	push_16(registers.pc);
+	registers.pc = 0x0010;
+}
+
+void Z80::RST_0x0018(void)
+{
+	push_16(registers.pc);
+	registers.pc = 0x0018;
+}
+
+void Z80::RST_0x0020(void)
+{
+	push_16(registers.pc);
+	registers.pc = 0x0020;
+}
+
+void Z80::RST_0x0028(void)
+{
+	push_16(registers.pc);
+	registers.pc = 0x0028;
+}
+
+void Z80::RST_0x0030(void)
+{
+	push_16(registers.pc);
+	registers.pc = 0x0030;
+}
+
+void Z80::RST_0x0038(void)
+{
+	push_16(registers.pc);
+	registers.pc = 0x0038;
 }
 
 void Z80::CPL(void)
@@ -1643,7 +1688,7 @@ Z80::Z80() : instructions({ {
 		{ "CALL NZ, 0x%04X",			0,	3,	{.op2 = &Z80::CALL_NZ			}},	// 0xc4
 		{ "PUSH BC",					16,	1,	{.op0 = &Z80::PUSH_BC			}},	// 0xc5
 		{ "ADD A, 0x%02X",				8,	2,	{.op1 = &Z80::ADD_A_d8			}},	// 0xc6
-		{ "RST 0x00",					8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xc7
+		{ "RST 0x00",					16,	1,	{.op0 = &Z80::RST_0x0000		}},	// 0xc7
 		{ "RET Z",						0,	1,	{.op0 = &Z80::RET_Z				}},	// 0xc8
 		{ "RET",						16,	1,	{.op0 = &Z80::RET				}},	// 0xc9
 		{ "JP Z, 0x%04X",				0,	3,	{.op2 = &Z80::JP_Z				}},	// 0xca
@@ -1651,7 +1696,7 @@ Z80::Z80() : instructions({ {
 		{ "CALL Z, 0x%04X",				0,	3,	{.op2 = &Z80::CALL_Z			}},	// 0xcc
 		{ "CALL 0x%04X",				24,	3,	{.op2 = &Z80::CALL				}},	// 0xcd
 		{ "ADC 0x%02X",					8,	2,	{.op1 = &Z80::ADC_A_d8			}},	// 0xce
-		{ "RST 0x08",					8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xcf
+		{ "RST 0x08",					16,	1,	{.op0 = &Z80::RST_0x0008		}},	// 0xcf
 		{ "RET NC",						0,	1,	{.op0 = &Z80::RET_NC			}},	// 0xd0
 		{ "POP DE",						12,	1,	{.op0 = &Z80::POP_DE			}},	// 0xd1
 		{ "JP NC, 0x%04X",				0,	3,	{.op2 = &Z80::JP_NC				}},	// 0xd2
@@ -1659,7 +1704,7 @@ Z80::Z80() : instructions({ {
 		{ "CALL NC, 0x%04X",			0,	3,	{.op2 = &Z80::CALL_NC			}},	// 0xd4
 		{ "PUSH DE",					16,	1,	{.op0 = &Z80::PUSH_DE			}},	// 0xd5
 		{ "SUB 0x%02X",					4,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0xd6
-		{ "RST 0x10",					8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xd7
+		{ "RST 0x10",					16,	1,	{.op0 = &Z80::RST_0x0010		}},	// 0xd7
 		{ "RET C",						0,	1,	{.op0 = &Z80::RET_C				}},	// 0xd8
 		{ "RETI",						8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xd9
 		{ "JP C, 0x%04X",				0,	3,	{.op2 = &Z80::JP_C				}},	// 0xda
@@ -1667,7 +1712,7 @@ Z80::Z80() : instructions({ {
 		{ "CALL C, 0x%04X",				0,	3,	{.op2 = &Z80::CALL_C			}},	// 0xdc
 		{ "UNKNOWN",					0,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xdd
 		{ "SBC 0x%02X",					4,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0xde
-		{ "RST 0x18",					8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xdf
+		{ "RST 0x18",					16,	1,	{.op0 = &Z80::RST_0x0018		}},	// 0xdf
 		{ "LD (0xFF00 + 0x%02X), A",	12,	2,	{.op1 = &Z80::LD_FF_a8_A		}},	// 0xe0
 		{ "POP HL",						12,	1,	{.op0 = &Z80::POP_HL			}},	// 0xe1
 		{ "LD (0xFF00 + C), A",			8,	1,	{.op0 = &Z80::LD_FF_Ca_A		}},	// 0xe2
@@ -1675,7 +1720,7 @@ Z80::Z80() : instructions({ {
 		{ "UNKNOWN",					0,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xe4
 		{ "PUSH HL",					16,	1,	{.op0 = &Z80::POP_HL			}},	// 0xe5
 		{ "AND 0x%02X",					8,	2,	{.op1 = &Z80::AND_d8			}},	// 0xe6
-		{ "RST 0x20",					8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xe7
+		{ "RST 0x20",					16,	1,	{.op0 = &Z80::RST_0x0020		}},	// 0xe7
 		{ "ADD SP,0x%02X",				8,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0xe8
 		{ "JP HL",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xe9
 		{ "LD (0x%04X), A",				16,	3,	{.op2 = &Z80::LD_a16_A			}},	// 0xea
@@ -1683,7 +1728,7 @@ Z80::Z80() : instructions({ {
 		{ "UNKNOWN",					0,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xec
 		{ "UNKNOWN",					0,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xed
 		{ "XOR 0x%02X",					4,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0xee
-		{ "RST 0x28",					8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xef
+		{ "RST 0x28",					16,	1,	{.op0 = &Z80::RST_0x0028		}},	// 0xef
 		{ "LD A, (0xFF00 + 0x%02X)",	12,	2,	{.op1 = &Z80::LD_FF_A_a8		}},	// 0xf0
 		{ "POP AF",						12,	1,	{.op0 = &Z80::POP_AF			}},	// 0xf1
 		{ "LD A, (0xFF00 + C)",			8,	1,	{.op0 = &Z80::LD_FF_A_Ca		}},	// 0xf2
@@ -1691,7 +1736,7 @@ Z80::Z80() : instructions({ {
 		{ "UNKNOWN",					0,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xf4
 		{ "PUSH AF",					16,	1,	{.op0 = &Z80::PUSH_AF			}},	// 0xf5
 		{ "OR 0x%02X",					4,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0xf6
-		{ "RST 0x30",					8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xf7
+		{ "RST 0x30",					16,	1,	{.op0 = &Z80::RST_0x0030		}},	// 0xf7
 		{ "LD HL, SP+0x%02X",			6,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0xf8
 		{ "LD SP, HL",					4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xf9
 		{ "LD A, (0x%04X)",				16,	3,	{.op2 = &Z80::LD_A_a16			}},	// 0xfa
@@ -1699,7 +1744,7 @@ Z80::Z80() : instructions({ {
 		{ "UNKNOWN",					0,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xfc
 		{ "UNKNOWN",					0,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xfd
 		{ "CP 0x%02X",					8,	2,	{.op1 = &Z80::CP_d8				}},	// 0xfe
-		{ "RST 0x38",					8,	1,	{.op0 = &Z80::unimplemented_op0 }}	// 0xff
+		{ "RST 0x38",					16,	1,	{.op0 = &Z80::RST_0x0038		}}	// 0xff
 	} }),
 	prefixInstructions({ {
 		{ "RLC B",		8,	&Z80::unimplemented_op0 },	// 0x00

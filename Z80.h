@@ -320,6 +320,14 @@ private:
 	void CP_d8(uint8_t value);
 	void DI(void);
 	void EI(void);
+	void RST_0x0000(void);
+	void RST_0x0008(void);
+	void RST_0x0010(void);
+	void RST_0x0018(void);
+	void RST_0x0020(void);
+	void RST_0x0028(void);
+	void RST_0x0030(void);
+	void RST_0x0038(void);
 	void CPL(void);
 	void unimplemented_op0(void);
 	void unimplemented_op1(uint8_t);
