@@ -684,6 +684,30 @@ void Z80::RL_HLa(void)
 	memory.write_8(registers.hl, value);
 }
 
+inline void Z80::swap(uint8_t& value)
+{
+	value = (((value & 0xf) << 4) | ((value & 0xf0) >> 4));
+
+	if (value == 0)
+		registers.f = ZERO_FLAG;	// SET
+	else
+		registers.f = 0;			// CLEAR
+}
+
+void Z80::SWAP_B(void) { swap(registers.b); }
+void Z80::SWAP_C(void) { swap(registers.c); }
+void Z80::SWAP_D(void) { swap(registers.d); }
+void Z80::SWAP_E(void) { swap(registers.e); }
+void Z80::SWAP_H(void) { swap(registers.h); }
+void Z80::SWAP_L(void) { swap(registers.l); }
+void Z80::SWAP_A(void) { swap(registers.a); }
+void Z80::SWAP_HLa(void)
+{
+	uint8_t value = memory.read_8(registers.hl);
+	swap(value);
+	memory.write_8(registers.hl, value);
+}
+
 void Z80::PREFIX(uint8_t instructionIndex)
 {
 	const PrefixInstruction& instruction = prefixInstructions[instructionIndex];
@@ -1726,14 +1750,14 @@ Z80::Z80() : instructions({ {
 		{ "SRA L",		8,	&Z80::unimplemented_op0 },	// 0x2d
 		{ "SRA (HL)",	16,	&Z80::unimplemented_op0 },	// 0x2e
 		{ "SRA A",		8,	&Z80::unimplemented_op0 },	// 0x2f
-		{ "SWAP B",		8,	&Z80::unimplemented_op0 },	// 0x30
-		{ "SWAP C",		8,	&Z80::unimplemented_op0 },	// 0x31
-		{ "SWAP D",		8,	&Z80::unimplemented_op0 },	// 0x32
-		{ "SWAP E",		8,	&Z80::unimplemented_op0 },	// 0x33
-		{ "SWAP H",		8,	&Z80::unimplemented_op0 },	// 0x34
-		{ "SWAP L",		8,	&Z80::unimplemented_op0 },	// 0x35
-		{ "SWAP (HL)",	16,	&Z80::unimplemented_op0 },	// 0x36
-		{ "SWAP A",		8,	&Z80::unimplemented_op0 },	// 0x37
+		{ "SWAP B",		8,	&Z80::SWAP_B			},	// 0x30
+		{ "SWAP C",		8,	&Z80::SWAP_C			},	// 0x31
+		{ "SWAP D",		8,	&Z80::SWAP_D			},	// 0x32
+		{ "SWAP E",		8,	&Z80::SWAP_E			},	// 0x33
+		{ "SWAP H",		8,	&Z80::SWAP_H			},	// 0x34
+		{ "SWAP L",		8,	&Z80::SWAP_L			},	// 0x35
+		{ "SWAP (HL)",	16,	&Z80::SWAP_HLa			},	// 0x36
+		{ "SWAP A",		8,	&Z80::SWAP_A			},	// 0x37
 		{ "SRL B",		8,	&Z80::unimplemented_op0 },	// 0x38
 		{ "SRL C",		8,	&Z80::unimplemented_op0 },	// 0x39
 		{ "SRL D",		8,	&Z80::unimplemented_op0 },	// 0x3a

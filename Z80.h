@@ -199,6 +199,15 @@ private:
 	void RL_L(void);
 	void RL_HLa(void);
 	void RL_A(void);
+	inline void swap(uint8_t& value);
+	void SWAP_B(void);
+	void SWAP_C(void);
+	void SWAP_D(void);
+	void SWAP_E(void);
+	void SWAP_H(void);
+	void SWAP_L(void);
+	void SWAP_HLa(void);
+	void SWAP_A(void);
 	void PREFIX(uint8_t instructionIndex);
 	inline void and_(uint8_t value);
 	void AND_B(void);
