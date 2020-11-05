@@ -1212,12 +1212,12 @@ inline void Z80::cp(uint8_t value)
 
 inline void Z80::add(uint8_t value)
 {
-	if ((registers.a + value) < registers.a)
+	if (((registers.a + value) & 0xFF) < registers.a)
 		registers.f |= CARRY_FLAG;	// SET
 	else
 		registers.f &= ~CARRY_FLAG;	// CLEAR
 
-	if (((registers.a + value) & 0x0f) < (registers.a & 0x0f))
+	if (((registers.a + value) & 0x0F) < (registers.a & 0x0F))
 		registers.f |= HALF_CARRY_FLAG;	// SET
 	else
 		registers.f &= ~HALF_CARRY_FLAG;	// CLEAR
@@ -1486,6 +1486,28 @@ void Z80::CPL(void)
 	registers.f |= (SUBTRACT_FLAG | HALF_CARRY_FLAG);
 }
 
+inline void Z80::add_16(uint16_t& accumulator, uint16_t value)
+{
+	if (((accumulator + value) & 0xFFFF) < accumulator)
+		registers.f |= CARRY_FLAG;	// SET
+	else
+		registers.f &= ~CARRY_FLAG;	// CLEAR
+
+	if (((accumulator + value) & 0x0F) < (accumulator & 0x0F))
+		registers.f |= HALF_CARRY_FLAG;	// SET
+	else
+		registers.f &= ~HALF_CARRY_FLAG;	// CLEAR
+
+	accumulator += value;
+
+	registers.f &= ~SUBTRACT_FLAG;	// CLEAR
+}
+
+void Z80::ADD_HL_BC(void) { add_16(registers.hl, registers.bc); }
+void Z80::ADD_HL_DE(void) { add_16(registers.hl, registers.de); }
+void Z80::ADD_HL_HL(void) { add_16(registers.hl, registers.hl); }
+void Z80::ADD_HL_SP(void) { add_16(registers.hl, registers.sp); }
+
 // TODO CLEAN UP INSTRUCTION TIMING AND USE T CYCLES!!!
 // instruction table is a modified version of: https://cturt.github.io/cinoop.html
 Z80::Z80() : instructions({ {
@@ -1498,7 +1520,7 @@ Z80::Z80() : instructions({ {
 		{ "LD B, 0x%02X",				8,	2,	{.op1 = &Z80::LD_B_d8			}},	// 0x06
 		{ "RLCA",						4,	1,	{.op0 = &Z80::RLCA				}},	// 0x07
 		{ "LD (0x%04X), SP",			10,	3,	{.op2 = &Z80::unimplemented_op2 }},	// 0x08
-		{ "ADD HL, BC",					4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x09
+		{ "ADD HL, BC",					8,	1,	{.op0 = &Z80::ADD_HL_BC			}},	// 0x09
 		{ "LD A, (BC)",					8,	1,	{.op0 = &Z80::LD_A_BCa			}},	// 0x0a
 		{ "DEC BC",						8,	1,	{.op0 = &Z80::DEC_BC			}},	// 0x0b
 		{ "INC C",						4,	1,	{.op0 = &Z80::INC_C				}},	// 0x0c
@@ -1514,7 +1536,7 @@ Z80::Z80() : instructions({ {
 		{ "LD D, 0x%02X",				8,	2,	{.op1 = &Z80::LD_D_d8			}},	// 0x16
 		{ "RLA",						4,	1,	{.op0 = &Z80::RLA				}},	// 0x17
 		{ "JR 0x%02X",					0,	2,	{.op1 = &Z80::JR_r8				}},	// 0x18
-		{ "ADD HL, DE",					4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x19
+		{ "ADD HL, DE",					8,	1,	{.op0 = &Z80::ADD_HL_DE			}},	// 0x19
 		{ "LD A, (DE)",					8,	1,	{.op0 = &Z80::LD_A_DEa			}},	// 0x1a
 		{ "DEC DE",						8,	1,	{.op0 = &Z80::DEC_DE			}},	// 0x1b
 		{ "INC E",						4,	1,	{.op0 = &Z80::INC_E				}},	// 0x1c
@@ -1530,7 +1552,7 @@ Z80::Z80() : instructions({ {
 		{ "LD H, 0x%02X",				8,	2,	{.op1 = &Z80::LD_H_d8			}},	// 0x26
 		{ "DAA",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x27
 		{ "JR Z, 0x%02X",				0,	2,	{.op1 = &Z80::JR_Z				}},	// 0x28
-		{ "ADD HL, HL",					4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x29
+		{ "ADD HL, HL",					8,	1,	{.op0 = &Z80::ADD_HL_HL			}},	// 0x29
 		{ "LDI A, (HL)",				8,	1,	{.op0 = &Z80::LDI_A_HLa			}},	// 0x2a
 		{ "DEC HL",						8,	1,	{.op0 = &Z80::DEC_HL			}},	// 0x2b
 		{ "INC L",						4,	1,	{.op0 = &Z80::INC_L				}},	// 0x2c
@@ -1546,7 +1568,7 @@ Z80::Z80() : instructions({ {
 		{ "LD (HL), 0x%02X",			12,	2,	{.op1 = &Z80::LD_HLa_d8			}},	// 0x36
 		{ "SCF",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x37
 		{ "JR C, 0x%02X",				0,	2,	{.op1 = &Z80::JR_C				}},	// 0x38
-		{ "ADD HL, SP",					4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x39
+		{ "ADD HL, SP",					8,	1,	{.op0 = &Z80::ADD_HL_SP			}},	// 0x39
 		{ "LDD A, (HL)",				8,	1,	{.op0 = &Z80::LDD_A_HLa			}},	// 0x3a
 		{ "DEC SP",						8,	1,	{.op0 = &Z80::DEC_SP			}},	// 0x3b
 		{ "INC A",						4,	1,	{.op0 = &Z80::INC_A				}},	// 0x3c

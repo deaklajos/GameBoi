@@ -329,6 +329,11 @@ private:
 	void RST_0x0030(void);
 	void RST_0x0038(void);
 	void CPL(void);
+	inline void add_16(uint16_t& accumulator, uint16_t value);
+	void ADD_HL_BC(void);
+	void ADD_HL_DE(void);
+	void ADD_HL_HL(void);
+	void ADD_HL_SP(void);
 	void unimplemented_op0(void);
 	void unimplemented_op1(uint8_t);
 	void unimplemented_op2(uint16_t);
