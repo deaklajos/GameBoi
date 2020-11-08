@@ -1874,7 +1874,7 @@ Z80::Z80() : instructions({ {
 		{ "LD (0xFF00 + C), A",			8,	1,	{.op0 = &Z80::LD_FF_Ca_A		}},	// 0xe2
 		{ "UNKNOWN",					0,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xe3
 		{ "UNKNOWN",					0,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xe4
-		{ "PUSH HL",					16,	1,	{.op0 = &Z80::POP_HL			}},	// 0xe5
+		{ "PUSH HL",					16,	1,	{.op0 = &Z80::PUSH_HL			}},	// 0xe5
 		{ "AND 0x%02X",					8,	2,	{.op1 = &Z80::AND_d8			}},	// 0xe6
 		{ "RST 0x20",					16,	1,	{.op0 = &Z80::RST_0x0020		}},	// 0xe7
 		{ "ADD SP,0x%02X",				8,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0xe8
@@ -2179,17 +2179,17 @@ void Z80::Reset()
 #include <set>
 void Z80::Clock()
 {
-	static uint16_t debug_pc_max = 0x0000;
-	static uint16_t debug_pc_min = 0xffff;
-	debug_pc_max = std::max(registers.pc, debug_pc_max);
-	debug_pc_min = std::min(registers.pc, debug_pc_min);
+	//static uint16_t debug_pc_max = 0x0000;
+	//static uint16_t debug_pc_min = 0xffff;
+	//debug_pc_max = std::max(registers.pc, debug_pc_max);
+	//debug_pc_min = std::min(registers.pc, debug_pc_min);
 
 	static bool pc_set_enable = false;
 	static std::set<uint16_t> pc_set;
 
-	if (registers.pc == 0x2803) {
-		pc_set_enable = true;
-	}
+	//if (registers.pc == 0x2803) {
+	//	pc_set_enable = true;
+	//}
 
 	if (pc_set_enable)
 		pc_set.insert(registers.pc);
