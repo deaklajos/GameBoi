@@ -22,6 +22,8 @@ private:
 	void LD_BC_d16(uint16_t data);
 	void LD_DE_d16(uint16_t data);
 	void LD_HL_d16(uint16_t data);
+	void LD_BCa_A(void);
+	void LD_DEa_A(void);
 	void LDD_HLa_A(void);
 	void LDI_HLa_A(void);
 	void LDD_A_HLa(void);

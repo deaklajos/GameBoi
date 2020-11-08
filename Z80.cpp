@@ -44,26 +44,30 @@ void Z80::LD_HL_d16(uint16_t data)
 	registers.hl = data;
 }
 
-void Z80::LDD_HLa_A(void)
-{
+void Z80::LD_BCa_A(void) {
+	memory.write_8(registers.bc, registers.a);
+}
+
+void Z80::LD_DEa_A(void) {
+	memory.write_8(registers.de, registers.a);
+}
+
+void Z80::LDD_HLa_A(void) {
 	memory.write_8(registers.hl, registers.a);
 	registers.hl--;
 }
 
-void Z80::LDI_HLa_A(void)
-{
+void Z80::LDI_HLa_A(void) {
 	memory.write_8(registers.hl, registers.a);
 	registers.hl++;
 }
 
-void Z80::LDD_A_HLa(void)
-{
+void Z80::LDD_A_HLa(void) {
 	registers.a = memory.read_8(registers.hl);
 	registers.hl--;
 }
 
-void Z80::LDI_A_HLa(void)
-{
+void Z80::LDI_A_HLa(void) {
 	registers.a = memory.read_8(registers.hl);
 	registers.hl++;
 }
@@ -1643,7 +1647,7 @@ void Z80::ADD_HL_SP(void) { add_16(registers.hl, registers.sp); }
 Z80::Z80() : instructions({ {
 		{ "NOP",						4,	1,	{.op0 = &Z80::NOP				}},	// 0x00
 		{ "LD BC, 0x%04X",				12,	3,	{.op2 = &Z80::LD_BC_d16			}},	// 0x01
-		{ "LD (BC), A",					4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x02
+		{ "LD (BC), A",					8,	1,	{.op0 = &Z80::LD_BCa_A			}},	// 0x02
 		{ "INC BC",						8,	1,	{.op0 = &Z80::INC_BC			}},	// 0x03
 		{ "INC B",						4,	1,	{.op0 = &Z80::INC_B				}},	// 0x04
 		{ "DEC B",						4,	1,	{.op0 = &Z80::DEC_B				}},	// 0x05
@@ -1659,7 +1663,7 @@ Z80::Z80() : instructions({ {
 		{ "RRCA",						4,	1,	{.op0 = &Z80::RRCA				}},	// 0x0f
 		{ "STOP",						2,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0x10
 		{ "LD DE, 0x%04X",				12,	3,	{.op2 = &Z80::LD_DE_d16			}},	// 0x11
-		{ "LD (DE), A",					4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x12
+		{ "LD (DE), A",					8,	1,	{.op0 = &Z80::LD_DEa_A			}},	// 0x12
 		{ "INC DE",						8,	1,	{.op0 = &Z80::INC_DE			}},	// 0x13
 		{ "INC D",						4,	1,	{.op0 = &Z80::INC_D				}},	// 0x14
 		{ "DEC D",						4,	1,	{.op0 = &Z80::DEC_D				}},	// 0x15
@@ -2172,8 +2176,24 @@ void Z80::Reset()
 	cycles = 0;
 }
 
+#include <set>
 void Z80::Clock()
 {
+	static uint16_t debug_pc_max = 0x0000;
+	static uint16_t debug_pc_min = 0xffff;
+	debug_pc_max = std::max(registers.pc, debug_pc_max);
+	debug_pc_min = std::min(registers.pc, debug_pc_min);
+
+	static bool pc_set_enable = false;
+	static std::set<uint16_t> pc_set;
+
+	if (registers.pc == 0x2803) {
+		pc_set_enable = true;
+	}
+
+	if (pc_set_enable)
+		pc_set.insert(registers.pc);
+
 	uint8_t instructionIndex = memory.read_8(registers.pc);
 	const Instruction& instruction = instructions[instructionIndex];
 	registers.pc++;
