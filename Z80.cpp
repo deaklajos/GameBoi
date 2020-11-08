@@ -650,6 +650,131 @@ void Z80::BIT_7_L(void)		{ bit7(registers.l); }
 void Z80::BIT_7_HLa(void)	{ bit7(memory.read_8(registers.hl)); }
 void Z80::BIT_7_A(void)		{ bit7(registers.a); }
 
+inline void Z80::res(uint8_t bitMask, uint8_t& value) {
+	value &= (~bitMask);
+}
+
+inline void Z80::res0(uint8_t& value) { res(1, value); }
+inline void Z80::res1(uint8_t& value) { res((1 << 1), value); }
+inline void Z80::res2(uint8_t& value) { res((1 << 2), value); }
+inline void Z80::res3(uint8_t& value) { res((1 << 3), value); }
+inline void Z80::res4(uint8_t& value) { res((1 << 4), value); }
+inline void Z80::res5(uint8_t& value) { res((1 << 5), value); }
+inline void Z80::res6(uint8_t& value) { res((1 << 6), value); }
+inline void Z80::res7(uint8_t& value) { res((1 << 7), value); }
+
+void Z80::RES_0_B(void) { res0(registers.b); }
+void Z80::RES_0_C(void) { res0(registers.c); }
+void Z80::RES_0_D(void) { res0(registers.d); }
+void Z80::RES_0_E(void) { res0(registers.e); }
+void Z80::RES_0_H(void) { res0(registers.h); }
+void Z80::RES_0_L(void) { res0(registers.l); }
+void Z80::RES_0_A(void) { res0(registers.a); }
+					    
+void Z80::RES_1_B(void) { res1(registers.b); }
+void Z80::RES_1_C(void) { res1(registers.c); }
+void Z80::RES_1_D(void) { res1(registers.d); }
+void Z80::RES_1_E(void) { res1(registers.e); }
+void Z80::RES_1_H(void) { res1(registers.h); }
+void Z80::RES_1_L(void) { res1(registers.l); }
+void Z80::RES_1_A(void) { res1(registers.a); }
+					    
+void Z80::RES_2_B(void) { res2(registers.b); }
+void Z80::RES_2_C(void) { res2(registers.c); }
+void Z80::RES_2_D(void) { res2(registers.d); }
+void Z80::RES_2_E(void) { res2(registers.e); }
+void Z80::RES_2_H(void) { res2(registers.h); }
+void Z80::RES_2_L(void) { res2(registers.l); }
+void Z80::RES_2_A(void) { res2(registers.a); }
+					    
+void Z80::RES_3_B(void) { res3(registers.b); }
+void Z80::RES_3_C(void) { res3(registers.c); }
+void Z80::RES_3_D(void) { res3(registers.d); }
+void Z80::RES_3_E(void) { res3(registers.e); }
+void Z80::RES_3_H(void) { res3(registers.h); }
+void Z80::RES_3_L(void) { res3(registers.l); }
+void Z80::RES_3_A(void) { res3(registers.a); }
+					    
+void Z80::RES_4_B(void) { res4(registers.b); }
+void Z80::RES_4_C(void) { res4(registers.c); }
+void Z80::RES_4_D(void) { res4(registers.d); }
+void Z80::RES_4_E(void) { res4(registers.e); }
+void Z80::RES_4_H(void) { res4(registers.h); }
+void Z80::RES_4_L(void) { res4(registers.l); }
+void Z80::RES_4_A(void) { res4(registers.a); }
+					    
+void Z80::RES_5_B(void) { res5(registers.b); }
+void Z80::RES_5_C(void) { res5(registers.c); }
+void Z80::RES_5_D(void) { res5(registers.d); }
+void Z80::RES_5_E(void) { res5(registers.e); }
+void Z80::RES_5_H(void) { res5(registers.h); }
+void Z80::RES_5_L(void) { res5(registers.l); }
+void Z80::RES_5_A(void) { res5(registers.a); }
+					    
+void Z80::RES_6_B(void) { res6(registers.b); }
+void Z80::RES_6_C(void) { res6(registers.c); }
+void Z80::RES_6_D(void) { res6(registers.d); }
+void Z80::RES_6_E(void) { res6(registers.e); }
+void Z80::RES_6_H(void) { res6(registers.h); }
+void Z80::RES_6_L(void) { res6(registers.l); }
+void Z80::RES_6_A(void) { res6(registers.a); }
+					    
+void Z80::RES_7_B(void) { res7(registers.b); }
+void Z80::RES_7_C(void) { res7(registers.c); }
+void Z80::RES_7_D(void) { res7(registers.d); }
+void Z80::RES_7_E(void) { res7(registers.e); }
+void Z80::RES_7_H(void) { res7(registers.h); }
+void Z80::RES_7_L(void) { res7(registers.l); }
+void Z80::RES_7_A(void) { res7(registers.a); }
+
+void Z80::RES_0_HLa(void) {
+	uint8_t value = memory.read_8(registers.hl);
+	res0(value);
+	memory.write_8(registers.hl, value);
+}
+
+void Z80::RES_1_HLa(void) {
+	uint8_t value = memory.read_8(registers.hl);
+	res1(value);
+	memory.write_8(registers.hl, value);
+}
+
+void Z80::RES_2_HLa(void) {
+	uint8_t value = memory.read_8(registers.hl);
+	res2(value);
+	memory.write_8(registers.hl, value);
+}
+
+void Z80::RES_3_HLa(void) {
+	uint8_t value = memory.read_8(registers.hl);
+	res3(value);
+	memory.write_8(registers.hl, value);
+}
+
+void Z80::RES_4_HLa(void) {
+	uint8_t value = memory.read_8(registers.hl);
+	res4(value);
+	memory.write_8(registers.hl, value);
+}
+
+void Z80::RES_5_HLa(void) {
+	uint8_t value = memory.read_8(registers.hl);
+	res5(value);
+	memory.write_8(registers.hl, value);
+}
+
+void Z80::RES_6_HLa(void) {
+	uint8_t value = memory.read_8(registers.hl);
+	res6(value);
+	memory.write_8(registers.hl, value);
+}
+
+void Z80::RES_7_HLa(void) {
+	uint8_t value = memory.read_8(registers.hl);
+	res7(value);
+	memory.write_8(registers.hl, value);
+}
+
 inline void Z80::rl(uint8_t &value)
 {
 	registers.f &= ~SUBTRACT_FLAG;		// CLEAR
@@ -1013,6 +1138,11 @@ void Z80::JP_NC(uint16_t address)
 void Z80::JP_C(uint16_t address)
 {
 	jp(address, registers.f & CARRY_FLAG);
+}
+
+void Z80::JP_HL(void)
+{
+	registers.pc = registers.hl;
 }
 
 void Z80::LD_B_d8(uint8_t data)
@@ -1744,7 +1874,7 @@ Z80::Z80() : instructions({ {
 		{ "AND 0x%02X",					8,	2,	{.op1 = &Z80::AND_d8			}},	// 0xe6
 		{ "RST 0x20",					16,	1,	{.op0 = &Z80::RST_0x0020		}},	// 0xe7
 		{ "ADD SP,0x%02X",				8,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0xe8
-		{ "JP HL",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xe9
+		{ "JP HL",						4,	1,	{.op0 = &Z80::JP_HL				}},	// 0xe9
 		{ "LD (0x%04X), A",				16,	3,	{.op2 = &Z80::LD_a16_A			}},	// 0xea
 		{ "UNKNOWN",					0,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xeb
 		{ "UNKNOWN",					0,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xec
@@ -1897,70 +2027,70 @@ Z80::Z80() : instructions({ {
 		{ "BIT7 L",		8,	&Z80::BIT_7_L			},	// 0x7d
 		{ "BIT7 (HL)",	12,	&Z80::BIT_7_HLa			},	// 0x7e
 		{ "BIT7 A",		8,	&Z80::BIT_7_A			},	// 0x7f
-		{ "RES0 B",		8,	&Z80::unimplemented_op0 },	// 0x80
-		{ "RES0 C",		8,	&Z80::unimplemented_op0 },	// 0x81
-		{ "RES0 D",		8,	&Z80::unimplemented_op0 },	// 0x82
-		{ "RES0 E",		8,	&Z80::unimplemented_op0 },	// 0x83
-		{ "RES0 H",		8,	&Z80::unimplemented_op0 },	// 0x84
-		{ "RES0 L",		8,	&Z80::unimplemented_op0 },	// 0x85
-		{ "RES0 (HL)",	16,	&Z80::unimplemented_op0 },	// 0x86
-		{ "RES0 A",		8,	&Z80::unimplemented_op0 },	// 0x87
-		{ "RES1 B",		8,	&Z80::unimplemented_op0 },	// 0x88
-		{ "RES1 C",		8,	&Z80::unimplemented_op0 },	// 0x89
-		{ "RES1 D",		8,	&Z80::unimplemented_op0 },	// 0x8a
-		{ "RES1 E",		8,	&Z80::unimplemented_op0 },	// 0x8b
-		{ "RES1 H",		8,	&Z80::unimplemented_op0 },	// 0x8c
-		{ "RES1 L",		8,	&Z80::unimplemented_op0 },	// 0x8d
-		{ "RES1 (HL)",	16,	&Z80::unimplemented_op0 },	// 0x8e
-		{ "RES1 A",		8,	&Z80::unimplemented_op0 },	// 0x8f
-		{ "RES2 B",		8,	&Z80::unimplemented_op0 },	// 0x90
-		{ "RES2 C",		8,	&Z80::unimplemented_op0 },	// 0x91
-		{ "RES2 D",		8,	&Z80::unimplemented_op0 },	// 0x92
-		{ "RES2 E",		8,	&Z80::unimplemented_op0 },	// 0x93
-		{ "RES2 H",		8,	&Z80::unimplemented_op0 },	// 0x94
-		{ "RES2 L",		8,	&Z80::unimplemented_op0 },	// 0x95
-		{ "RES2 (HL)",	16,	&Z80::unimplemented_op0 },	// 0x96
-		{ "RES2 A",		8,	&Z80::unimplemented_op0 },	// 0x97
-		{ "RES3 B",		8,	&Z80::unimplemented_op0 },	// 0x98
-		{ "RES3 C",		8,	&Z80::unimplemented_op0 },	// 0x99
-		{ "RES3 D",		8,	&Z80::unimplemented_op0 },	// 0x9a
-		{ "RES3 E",		8,	&Z80::unimplemented_op0 },	// 0x9b
-		{ "RES3 H",		8,	&Z80::unimplemented_op0 },	// 0x9c
-		{ "RES3 L",		8,	&Z80::unimplemented_op0 },	// 0x9d
-		{ "RES3 (HL)",	16,	&Z80::unimplemented_op0 },	// 0x9e
-		{ "RES3 A",		8,	&Z80::unimplemented_op0 },	// 0x9f
-		{ "RES4 B",		8,	&Z80::unimplemented_op0 },	// 0xa0
-		{ "RES4 C",		8,	&Z80::unimplemented_op0 },	// 0xa1
-		{ "RES4 D",		8,	&Z80::unimplemented_op0 },	// 0xa2
-		{ "RES4 E",		8,	&Z80::unimplemented_op0 },	// 0xa3
-		{ "RES4 H",		8,	&Z80::unimplemented_op0 },	// 0xa4
-		{ "RES4 L",		8,	&Z80::unimplemented_op0 },	// 0xa5
-		{ "RES4 (HL)",	16,	&Z80::unimplemented_op0 },	// 0xa6
-		{ "RES4 A",		8,	&Z80::unimplemented_op0 },	// 0xa7
-		{ "RES5 B",		8,	&Z80::unimplemented_op0 },	// 0xa8
-		{ "RES5 C",		8,	&Z80::unimplemented_op0 },	// 0xa9
-		{ "RES5 D",		8,	&Z80::unimplemented_op0 },	// 0xaa
-		{ "RES5 E",		8,	&Z80::unimplemented_op0 },	// 0xab
-		{ "RES5 H",		8,	&Z80::unimplemented_op0 },	// 0xac
-		{ "RES5 L",		8,	&Z80::unimplemented_op0 },	// 0xad
-		{ "RES5 (HL)",	16,	&Z80::unimplemented_op0 },	// 0xae
-		{ "RES5 A",		8,	&Z80::unimplemented_op0 },	// 0xaf
-		{ "RES6 B",		8,	&Z80::unimplemented_op0 },	// 0xb0
-		{ "RES6 C",		8,	&Z80::unimplemented_op0 },	// 0xb1
-		{ "RES6 D",		8,	&Z80::unimplemented_op0 },	// 0xb2
-		{ "RES6 E",		8,	&Z80::unimplemented_op0 },	// 0xb3
-		{ "RES6 H",		8,	&Z80::unimplemented_op0 },	// 0xb4
-		{ "RES6 L",		8,	&Z80::unimplemented_op0 },	// 0xb5
-		{ "RES6 (HL)",	16,	&Z80::unimplemented_op0 },	// 0xb6
-		{ "RES6 A",		8,	&Z80::unimplemented_op0 },	// 0xb7
-		{ "RES7 B",		8,	&Z80::unimplemented_op0 },	// 0xb8
-		{ "RES7 C",		8,	&Z80::unimplemented_op0 },	// 0xb9
-		{ "RES7 D",		8,	&Z80::unimplemented_op0 },	// 0xba
-		{ "RES7 E",		8,	&Z80::unimplemented_op0 },	// 0xbb
-		{ "RES7 H",		8,	&Z80::unimplemented_op0 },	// 0xbc
-		{ "RES7 L",		8,	&Z80::unimplemented_op0 },	// 0xbd
-		{ "RES7 (HL)",	16,	&Z80::unimplemented_op0 },	// 0xbe
-		{ "RES7 A",		8,	&Z80::unimplemented_op0 },	// 0xbf
+		{ "RES0 B",		8,	&Z80::RES_0_B			},	// 0x80
+		{ "RES0 C",		8,	&Z80::RES_0_C			},	// 0x81
+		{ "RES0 D",		8,	&Z80::RES_0_D			},	// 0x82
+		{ "RES0 E",		8,	&Z80::RES_0_E			},	// 0x83
+		{ "RES0 H",		8,	&Z80::RES_0_H			},	// 0x84
+		{ "RES0 L",		8,	&Z80::RES_0_L			},	// 0x85
+		{ "RES0 (HL)",	16,	&Z80::RES_0_HLa			},	// 0x86
+		{ "RES0 A",		8,	&Z80::RES_0_A			},	// 0x87
+		{ "RES1 B",		8,	&Z80::RES_1_B			},	// 0x88
+		{ "RES1 C",		8,	&Z80::RES_1_C			},	// 0x89
+		{ "RES1 D",		8,	&Z80::RES_1_D			},	// 0x8a
+		{ "RES1 E",		8,	&Z80::RES_1_E			},	// 0x8b
+		{ "RES1 H",		8,	&Z80::RES_1_H			},	// 0x8c
+		{ "RES1 L",		8,	&Z80::RES_1_L			},	// 0x8d
+		{ "RES1 (HL)",	16,	&Z80::RES_1_HLa			},	// 0x8e
+		{ "RES1 A",		8,	&Z80::RES_1_A			},	// 0x8f
+		{ "RES2 B",		8,	&Z80::RES_2_B			},	// 0x90
+		{ "RES2 C",		8,	&Z80::RES_2_C			},	// 0x91
+		{ "RES2 D",		8,	&Z80::RES_2_D			},	// 0x92
+		{ "RES2 E",		8,	&Z80::RES_2_E			},	// 0x93
+		{ "RES2 H",		8,	&Z80::RES_2_H			},	// 0x94
+		{ "RES2 L",		8,	&Z80::RES_2_L			},	// 0x95
+		{ "RES2 (HL)",	16,	&Z80::RES_2_HLa			},	// 0x96
+		{ "RES2 A",		8,	&Z80::RES_2_A			},	// 0x97
+		{ "RES3 B",		8,	&Z80::RES_3_B			},	// 0x98
+		{ "RES3 C",		8,	&Z80::RES_3_C			},	// 0x99
+		{ "RES3 D",		8,	&Z80::RES_3_D			},	// 0x9a
+		{ "RES3 E",		8,	&Z80::RES_3_E			},	// 0x9b
+		{ "RES3 H",		8,	&Z80::RES_3_H			},	// 0x9c
+		{ "RES3 L",		8,	&Z80::RES_3_L			},	// 0x9d
+		{ "RES3 (HL)",	16,	&Z80::RES_3_HLa			},	// 0x9e
+		{ "RES3 A",		8,	&Z80::RES_3_A			},	// 0x9f
+		{ "RES4 B",		8,	&Z80::RES_4_B			},	// 0xa0
+		{ "RES4 C",		8,	&Z80::RES_4_C			},	// 0xa1
+		{ "RES4 D",		8,	&Z80::RES_4_D			},	// 0xa2
+		{ "RES4 E",		8,	&Z80::RES_4_E			},	// 0xa3
+		{ "RES4 H",		8,	&Z80::RES_4_H			},	// 0xa4
+		{ "RES4 L",		8,	&Z80::RES_4_L			},	// 0xa5
+		{ "RES4 (HL)",	16,	&Z80::RES_4_HLa			},	// 0xa6
+		{ "RES4 A",		8,	&Z80::RES_4_A			},	// 0xa7
+		{ "RES5 B",		8,	&Z80::RES_5_B			},	// 0xa8
+		{ "RES5 C",		8,	&Z80::RES_5_C			},	// 0xa9
+		{ "RES5 D",		8,	&Z80::RES_5_D			},	// 0xaa
+		{ "RES5 E",		8,	&Z80::RES_5_E			},	// 0xab
+		{ "RES5 H",		8,	&Z80::RES_5_H			},	// 0xac
+		{ "RES5 L",		8,	&Z80::RES_5_L			},	// 0xad
+		{ "RES5 (HL)",	16,	&Z80::RES_5_HLa			},	// 0xae
+		{ "RES5 A",		8,	&Z80::RES_5_A			},	// 0xaf
+		{ "RES6 B",		8,	&Z80::RES_6_B			},	// 0xb0
+		{ "RES6 C",		8,	&Z80::RES_6_C			},	// 0xb1
+		{ "RES6 D",		8,	&Z80::RES_6_D			},	// 0xb2
+		{ "RES6 E",		8,	&Z80::RES_6_E			},	// 0xb3
+		{ "RES6 H",		8,	&Z80::RES_6_H			},	// 0xb4
+		{ "RES6 L",		8,	&Z80::RES_6_L			},	// 0xb5
+		{ "RES6 (HL)",	16,	&Z80::RES_6_HLa			},	// 0xb6
+		{ "RES6 A",		8,	&Z80::RES_6_A			},	// 0xb7
+		{ "RES7 B",		8,	&Z80::RES_7_B			},	// 0xb8
+		{ "RES7 C",		8,	&Z80::RES_7_C			},	// 0xb9
+		{ "RES7 D",		8,	&Z80::RES_7_D			},	// 0xba
+		{ "RES7 E",		8,	&Z80::RES_7_E			},	// 0xbb
+		{ "RES7 H",		8,	&Z80::RES_7_H			},	// 0xbc
+		{ "RES7 L",		8,	&Z80::RES_7_L			},	// 0xbd
+		{ "RES7 (HL)",	16,	&Z80::RES_7_HLa			},	// 0xbe
+		{ "RES7 A",		8,	&Z80::RES_7_A			},	// 0xbf
 		{ "SET0 B",		8,	&Z80::unimplemented_op0 },	// 0xc0
 		{ "SET0 C",		8,	&Z80::unimplemented_op0 },	// 0xc1
 		{ "SET0 D",		8,	&Z80::unimplemented_op0 },	// 0xc2
