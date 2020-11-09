@@ -292,6 +292,15 @@ private:
 	void SWAP_L(void);
 	void SWAP_HLa(void);
 	void SWAP_A(void);
+	inline void srl(uint8_t& value);
+	void SRL_B(void);
+	void SRL_C(void);
+	void SRL_D(void);
+	void SRL_E(void);
+	void SRL_H(void);
+	void SRL_L(void);
+	void SRL_HLa(void);
+	void SRL_A(void);
 	void PREFIX(uint8_t instructionIndex);
 	inline void and_(uint8_t value);
 	void AND_B(void);

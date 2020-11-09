@@ -889,6 +889,38 @@ void Z80::SWAP_HLa(void)
 	memory.write_8(registers.hl, value);
 }
 
+inline void Z80::srl(uint8_t& value)
+{
+	registers.f &= ~SUBTRACT_FLAG;		// CLEAR
+	registers.f &= ~HALF_CARRY_FLAG;	// CLEAR
+
+	uint8_t carry = (value & 1u);
+	if (carry)
+		registers.f |= CARRY_FLAG;	// SET
+	else
+		registers.f &= ~CARRY_FLAG;	// CLEAR
+
+	value >>= 1;
+
+	if (value)
+		registers.f &= ~ZERO_FLAG;	// CLEAR
+	else
+		registers.f |= ZERO_FLAG;	// SET
+}
+
+void Z80::SRL_B(void) { srl(registers.b); }
+void Z80::SRL_C(void) { srl(registers.c); }
+void Z80::SRL_D(void) { srl(registers.d); }
+void Z80::SRL_E(void) { srl(registers.e); }
+void Z80::SRL_H(void) { srl(registers.h); }
+void Z80::SRL_L(void) { srl(registers.l); }
+void Z80::SRL_A(void) { srl(registers.a); }
+void Z80::SRL_HLa(void) {
+	uint8_t value = memory.read_8(registers.hl);
+	srl(value);
+	memory.write_8(registers.hl, value);
+}
+
 void Z80::PREFIX(uint8_t instructionIndex)
 {
 	const PrefixInstruction& instruction = prefixInstructions[instructionIndex];
@@ -2016,14 +2048,14 @@ Z80::Z80() : instructions({ {
 		{ "SWAP L",		8,	&Z80::SWAP_L			},	// 0x35
 		{ "SWAP (HL)",	16,	&Z80::SWAP_HLa			},	// 0x36
 		{ "SWAP A",		8,	&Z80::SWAP_A			},	// 0x37
-		{ "SRL B",		8,	&Z80::unimplemented_op0 },	// 0x38
-		{ "SRL C",		8,	&Z80::unimplemented_op0 },	// 0x39
-		{ "SRL D",		8,	&Z80::unimplemented_op0 },	// 0x3a
-		{ "SRL E",		8,	&Z80::unimplemented_op0 },	// 0x3b
-		{ "SRL H",		8,	&Z80::unimplemented_op0 },	// 0x3c
-		{ "SRL L",		8,	&Z80::unimplemented_op0 },	// 0x3d
-		{ "SRL (HL)",	16,	&Z80::unimplemented_op0 },	// 0x3e
-		{ "SRL A",		8,	&Z80::unimplemented_op0 },	// 0x3f
+		{ "SRL B",		8,	&Z80::SRL_B				},	// 0x38
+		{ "SRL C",		8,	&Z80::SRL_C				},	// 0x39
+		{ "SRL D",		8,	&Z80::SRL_D				},	// 0x3a
+		{ "SRL E",		8,	&Z80::SRL_E				},	// 0x3b
+		{ "SRL H",		8,	&Z80::SRL_H				},	// 0x3c
+		{ "SRL L",		8,	&Z80::SRL_L				},	// 0x3d
+		{ "SRL (HL)",	16,	&Z80::SRL_HLa			},	// 0x3e
+		{ "SRL A",		8,	&Z80::SRL_A				},	// 0x3f
 		{ "BIT0 B",		8,	&Z80::BIT_0_B			},	// 0x40
 		{ "BIT0 C",		8,	&Z80::BIT_0_C			},	// 0x41
 		{ "BIT0 D",		8,	&Z80::BIT_0_D			},	// 0x42
