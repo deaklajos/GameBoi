@@ -274,6 +274,15 @@ private:
 	void RL_L(void);
 	void RL_HLa(void);
 	void RL_A(void);
+	inline void sla(uint8_t& value);
+	void SLA_B(void);
+	void SLA_C(void);
+	void SLA_D(void);
+	void SLA_E(void);
+	void SLA_H(void);
+	void SLA_L(void);
+	void SLA_HLa(void);
+	void SLA_A(void);
 	inline void swap(uint8_t& value);
 	void SWAP_B(void);
 	void SWAP_C(void);

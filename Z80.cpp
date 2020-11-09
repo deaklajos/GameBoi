@@ -833,6 +833,38 @@ void Z80::RL_HLa(void)
 	memory.write_8(registers.hl, value);
 }
 
+inline void Z80::sla(uint8_t& value)
+{
+	registers.f &= ~SUBTRACT_FLAG;		// CLEAR
+	registers.f &= ~HALF_CARRY_FLAG;	// CLEAR
+
+	uint8_t carry = (value & (1u << 7)) >> 7;
+	if (carry)
+		registers.f |= CARRY_FLAG;	// SET
+	else
+		registers.f &= ~CARRY_FLAG;	// CLEAR
+
+	value <<= 1;
+
+	if (value)
+		registers.f &= ~ZERO_FLAG;	// CLEAR
+	else
+		registers.f |= ZERO_FLAG;	// SET
+}
+
+void Z80::SLA_B(void) { sla(registers.b); }
+void Z80::SLA_C(void) { sla(registers.c); }
+void Z80::SLA_D(void) { sla(registers.d); }
+void Z80::SLA_E(void) { sla(registers.e); }
+void Z80::SLA_H(void) { sla(registers.h); }
+void Z80::SLA_L(void) { sla(registers.l); }
+void Z80::SLA_A(void) { sla(registers.a); }
+void Z80::SLA_HLa(void) {
+	uint8_t value = memory.read_8(registers.hl);
+	sla(value);
+	memory.write_8(registers.hl, value);
+}
+
 inline void Z80::swap(uint8_t& value)
 {
 	value = (((value & 0xf) << 4) | ((value & 0xf0) >> 4));
@@ -1955,14 +1987,14 @@ Z80::Z80() : instructions({ {
 		{ "RR L",		8,	&Z80::unimplemented_op0 },	// 0x1d
 		{ "RR (HL)",	16,	&Z80::unimplemented_op0 },	// 0x1e
 		{ "RR A",		8,	&Z80::unimplemented_op0 },	// 0x1f
-		{ "SLA B",		8,	&Z80::unimplemented_op0 },	// 0x20
-		{ "SLA C",		8,	&Z80::unimplemented_op0 },	// 0x21
-		{ "SLA D",		8,	&Z80::unimplemented_op0 },	// 0x22
-		{ "SLA E",		8,	&Z80::unimplemented_op0 },	// 0x23
-		{ "SLA H",		8,	&Z80::unimplemented_op0 },	// 0x24
-		{ "SLA L",		8,	&Z80::unimplemented_op0 },	// 0x25
-		{ "SLA (HL)",	16,	&Z80::unimplemented_op0 },	// 0x26
-		{ "SLA A",		8,	&Z80::unimplemented_op0 },	// 0x27
+		{ "SLA B",		8,	&Z80::SLA_B				},	// 0x20
+		{ "SLA C",		8,	&Z80::SLA_C				},	// 0x21
+		{ "SLA D",		8,	&Z80::SLA_D				},	// 0x22
+		{ "SLA E",		8,	&Z80::SLA_E				},	// 0x23
+		{ "SLA H",		8,	&Z80::SLA_H				},	// 0x24
+		{ "SLA L",		8,	&Z80::SLA_L				},	// 0x25
+		{ "SLA (HL)",	16,	&Z80::SLA_HLa			},	// 0x26
+		{ "SLA A",		8,	&Z80::SLA_A				},	// 0x27
 		{ "SRA B",		8,	&Z80::unimplemented_op0 },	// 0x28
 		{ "SRA C",		8,	&Z80::unimplemented_op0 },	// 0x29
 		{ "SRA D",		8,	&Z80::unimplemented_op0 },	// 0x2a
