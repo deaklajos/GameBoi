@@ -416,6 +416,8 @@ private:
 
 	uint16_t pop_16(void);
 	void push_16(uint16_t data);
+	void HandleVblankInterrupt(void);
+	void RETI(void);
 
 private:
 	MMU memory;

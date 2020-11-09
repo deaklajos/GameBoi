@@ -21,6 +21,26 @@ void Z80::unimplemented_op2(uint16_t)
 	UNIMPLEMENTED();
 }
 
+void Z80::HandleVblankInterrupt(void)
+{
+	memory.interruptMaster = false;
+
+	push_16(registers.pc);
+
+	registers.pc = 0x0040;
+
+	cycles += 12;
+}
+
+void Z80::RETI(void)
+{
+	memory.interruptMaster = true;
+
+	registers.pc = pop_16();
+
+	cycles += 12;
+}
+
 void Z80::NOP(void)
 {}
 
