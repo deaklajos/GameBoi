@@ -48,7 +48,7 @@ public:
 		};
 	}gpuControl;
 
-	struct InterruptEnable {
+	struct InterruptFlags {
 		union {
 			struct {
 				bool Vblank : 1;
@@ -61,8 +61,8 @@ public:
 			uint8_t value;
 		};
 	};
-	InterruptEnable interruptEnable;
-	InterruptEnable interruptFlags;
+	InterruptFlags	interruptEnable;
+	InterruptFlags	interruptFlags;
 	bool			interruptMaster = false;
 
 	std::array<uint8_t, 0x2000> VRAM;

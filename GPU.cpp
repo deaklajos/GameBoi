@@ -41,6 +41,7 @@ void GPU::Clock()
 			{
 				mode = VerticalBlank;
 				display.Show();
+				memory.interruptFlags.Vblank = true;
 			}
 			else
 			{

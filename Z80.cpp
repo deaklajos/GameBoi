@@ -1882,7 +1882,7 @@ Z80::Z80() : instructions({ {
 		{ "SUB 0x%02X",					4,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0xd6
 		{ "RST 0x10",					16,	1,	{.op0 = &Z80::RST_0x0010		}},	// 0xd7
 		{ "RET C",						0,	1,	{.op0 = &Z80::RET_C				}},	// 0xd8
-		{ "RETI",						8,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xd9
+		{ "RETI",						0,	1,	{.op0 = &Z80::RETI				}},	// 0xd9
 		{ "JP C, 0x%04X",				0,	3,	{.op2 = &Z80::JP_C				}},	// 0xda
 		{ "UNKNOWN",					0,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xdb
 		{ "CALL C, 0x%04X",				0,	3,	{.op2 = &Z80::CALL_C			}},	// 0xdc
@@ -2207,7 +2207,7 @@ void Z80::Clock()
 	static bool pc_set_enable = false;
 	static std::set<uint16_t> pc_set;
 
-	//if (registers.pc == 0x2803) {
+	//if (registers.pc == 0x02d3) {
 	//	pc_set_enable = true;
 	//}
 
@@ -2239,4 +2239,15 @@ void Z80::Clock()
 	cycles += instruction.cycleCount;
 
 	gpu.Clock();
+
+	MMU::InterruptFlags interruptsToHandle;
+	interruptsToHandle.value = (memory.interruptEnable.value & memory.interruptFlags.value);
+	if (memory.interruptMaster && interruptsToHandle.value)
+	{
+		if (interruptsToHandle.Vblank) {
+			memory.interruptFlags.Vblank = false;
+
+			HandleVblankInterrupt();
+		}
+	}
 }
