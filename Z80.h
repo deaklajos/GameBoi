@@ -404,6 +404,7 @@ private:
 	void SUB_L(void);
 	void SUB_HLa(void);
 	void SUB_A(void);
+	void SUB_d8(uint8_t value);
 	void CP_B(void);
 	void CP_C(void);
 	void CP_D(void);

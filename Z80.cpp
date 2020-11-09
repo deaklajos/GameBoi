@@ -1600,6 +1600,11 @@ void Z80::SUB_A(void)
 	sub(registers.a);
 }
 
+void Z80::SUB_d8(uint8_t value)
+{
+	sub(value);
+}
+
 void Z80::CP_B(void)
 {
 	cp(registers.b);
@@ -1948,7 +1953,7 @@ Z80::Z80() : instructions({ {
 		{ "UNKNOWN",					0,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xd3
 		{ "CALL NC, 0x%04X",			0,	3,	{.op2 = &Z80::CALL_NC			}},	// 0xd4
 		{ "PUSH DE",					16,	1,	{.op0 = &Z80::PUSH_DE			}},	// 0xd5
-		{ "SUB 0x%02X",					4,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0xd6
+		{ "SUB 0x%02X",					8,	2,	{.op1 = &Z80::SUB_d8			}},	// 0xd6
 		{ "RST 0x10",					16,	1,	{.op0 = &Z80::RST_0x0010		}},	// 0xd7
 		{ "RET C",						0,	1,	{.op0 = &Z80::RET_C				}},	// 0xd8
 		{ "RETI",						0,	1,	{.op0 = &Z80::RETI				}},	// 0xd9
