@@ -1558,12 +1558,12 @@ void Z80::CP_d8(uint8_t value)
 
 void Z80::DI(void)
 {
-	/*throw std::logic_error("Unimplemented!");*/
+	memory.interruptMaster = false;
 }
 
 void Z80::EI(void)
 {
-	/*throw std::logic_error("Unimplemented!");*/
+	memory.interruptMaster = true;
 }
 
 void Z80::RST_0x0000(void)
