@@ -48,6 +48,23 @@ public:
 		};
 	}gpuControl;
 
+	struct InterruptEnable {
+		union {
+			struct {
+				bool Vblank : 1;
+				bool LCDStatus : 1;
+				bool timer : 1;
+				bool serial : 1;
+				bool joypad : 1;
+				bool : 3;
+			};
+			uint8_t value;
+		};
+	};
+	InterruptEnable interruptEnable;
+	InterruptEnable interruptFlags;
+	bool			interruptMaster = false;
+
 	std::array<uint8_t, 0x2000> VRAM;
 private:
 	mutable bool isBootROMRunning = true;

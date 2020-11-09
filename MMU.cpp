@@ -26,6 +26,8 @@ boot_ROM{
 {
 	backgroundPalette.value = 0;
 	gpuControl.value = 0;
+	interruptEnable.value = 0;
+	interruptFlags.value = 0;
 
 	if (std::ifstream infile{ "tetris.gb", std::ios::binary | std::ios::ate }) {
 		auto size = infile.tellg();
@@ -104,7 +106,10 @@ uint8_t MMU::read_8(uint16_t address) const
 			}
 
 		case 0xF00:
-			if (address >= 0xFF80) {
+			if (address == 0xFFFF) {
+				return interruptEnable.value;
+			}
+			else if (address >= 0xFF80) {
 				return ZRAM[address & 0x7F];
 			}
 			else
@@ -114,6 +119,8 @@ uint8_t MMU::read_8(uint16_t address) const
 				{
 				case 0xFF00: // gamepad
 					return 0b00101111;
+				case 0xFF0F:
+					return interruptFlags.value;
 				case 0xFF40:
 					return gpuControl.value;
 				case 0xFF42:
@@ -198,7 +205,11 @@ void MMU::write_8(uint16_t address, uint8_t data)
 			}
 
 		case 0xF00:
-			if (address >= 0xFF80) {
+			if (address == 0xFFFF) {
+				interruptEnable.value = data;
+				return;
+			}
+			else if (address >= 0xFF80) {
 				ZRAM[address & 0x7F] = data;
 				return;
 			}
@@ -207,6 +218,9 @@ void MMU::write_8(uint16_t address, uint8_t data)
 				// I/O
 				switch (address)
 				{
+				case 0xFF0F:
+					interruptFlags.value = data;
+					return;
 				case 0xFF26:
 					// Sound ON/OFF
 					return;
