@@ -1052,6 +1052,11 @@ void Z80::OR_A(void)
 	or_(registers.a);
 }
 
+void Z80::OR_d8(uint8_t value)
+{
+	or_(value);
+}
+
 void Z80::RLCA(void)
 {
 	registers.f &= ~ZERO_FLAG;			// CLEAR
@@ -1943,7 +1948,7 @@ Z80::Z80() : instructions({ {
 		{ "DI",							4,	1,	{.op0 = &Z80::DI				}},	// 0xf3
 		{ "UNKNOWN",					0,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xf4
 		{ "PUSH AF",					16,	1,	{.op0 = &Z80::PUSH_AF			}},	// 0xf5
-		{ "OR 0x%02X",					4,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0xf6
+		{ "OR 0x%02X",					8,	2,	{.op1 = &Z80::OR_d8				}},	// 0xf6
 		{ "RST 0x30",					16,	1,	{.op0 = &Z80::RST_0x0030		}},	// 0xf7
 		{ "LD HL, SP+0x%02X",			6,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0xf8
 		{ "LD SP, HL",					4,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xf9

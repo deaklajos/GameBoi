@@ -321,6 +321,7 @@ private:
 	void OR_L(void);
 	void OR_HLa(void);
 	void OR_A(void);
+	void OR_d8(uint8_t value);
 	void RLCA(void);
 	void RRCA(void);
 	void RLA(void);
