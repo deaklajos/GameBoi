@@ -430,6 +430,7 @@ private:
 	void ADD_HL_DE(void);
 	void ADD_HL_HL(void);
 	void ADD_HL_SP(void);
+	void DAA(void);
 	void unimplemented_op0(void);
 	void unimplemented_op1(uint8_t);
 	void unimplemented_op2(uint16_t);

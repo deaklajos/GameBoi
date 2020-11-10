@@ -123,6 +123,8 @@ uint8_t MMU::read_8(uint16_t address) const
 					return interruptFlags.value;
 				case 0xFF40:
 					return gpuControl.value;
+				case 0xFF41: // LCD Status
+					return 0;
 				case 0xFF42:
 					return scrollY;
 				case 0xFF43:

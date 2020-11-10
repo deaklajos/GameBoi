@@ -1736,6 +1736,33 @@ void Z80::ADD_HL_DE(void) { add_16(registers.hl, registers.de); }
 void Z80::ADD_HL_HL(void) { add_16(registers.hl, registers.hl); }
 void Z80::ADD_HL_SP(void) { add_16(registers.hl, registers.sp); }
 
+// from: https://forums.nesdev.com/viewtopic.php?t=15944
+void Z80::DAA(void)
+{
+	// note: assumes a is a uint8_t and wraps from 0xff to 0
+	if (!(registers.f & SUBTRACT_FLAG)) {  // after an addition, adjust if (half-)carry occurred or if result is out of bounds
+		if ((registers.f & CARRY_FLAG) || registers.a > 0x99)
+		{
+			registers.a += 0x60;
+			registers.f |= CARRY_FLAG;	// SET
+		}
+
+		if ((registers.f & HALF_CARRY_FLAG) || (registers.a & 0x0f) > 0x09) {
+			registers.a += 0x6;
+		}
+	}
+	else {  // after a subtraction, only adjust if (half-)carry occurred
+		if ((registers.f & CARRY_FLAG)) { registers.a -= 0x60; }
+		if ((registers.f & HALF_CARRY_FLAG)) { registers.a -= 0x6; }
+	}
+	// these flags are always updated
+	if (registers.a == 0) // the usual z flag
+		registers.f |= ZERO_FLAG;	// SET
+
+	registers.f &= ~HALF_CARRY_FLAG;	// CLEAR // h flag is always cleared
+}
+
+
 // TODO CLEAN UP INSTRUCTION TIMING AND USE T CYCLES!!!
 // instruction table is a modified version of: https://cturt.github.io/cinoop.html
 Z80::Z80() : instructions({ {
@@ -1778,7 +1805,7 @@ Z80::Z80() : instructions({ {
 		{ "INC H",						4,	1,	{.op0 = &Z80::INC_H				}},	// 0x24
 		{ "DEC H",						4,	1,	{.op0 = &Z80::DEC_H				}},	// 0x25
 		{ "LD H, 0x%02X",				8,	2,	{.op1 = &Z80::LD_H_d8			}},	// 0x26
-		{ "DAA",						2,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0x27
+		{ "DAA",						4,	1,	{.op0 = &Z80::DAA				}},	// 0x27
 		{ "JR Z, 0x%02X",				0,	2,	{.op1 = &Z80::JR_Z				}},	// 0x28
 		{ "ADD HL, HL",					8,	1,	{.op0 = &Z80::ADD_HL_HL			}},	// 0x29
 		{ "LDI A, (HL)",				8,	1,	{.op0 = &Z80::LDI_A_HLa			}},	// 0x2a
