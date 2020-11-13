@@ -28,5 +28,6 @@ private:
 	const uint64_t& cycles; // TODO Dirty hack
 	uint64_t last_cycles = 0; // TODO could be smaler
 	uint64_t gpu_cycles = 0; // TODO could be smaler
+	uint8_t lineValues[160];
 };
 

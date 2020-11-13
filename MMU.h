@@ -21,7 +21,7 @@ public:
 	uint8_t scrollX = 0;
 	uint8_t line = 0;
 	const uint8_t COLORS[4] = { 255, 192, 96, 0 }; // TODO satatic?
-	struct BackgroundPalette {
+	struct Palette {
 		union {
 			struct {
 				uint8_t Color0 : 2;
@@ -31,7 +31,25 @@ public:
 			};
 			uint8_t value;
 		};
-	}backgroundPalette;
+	};
+	Palette backgroundPalette;
+	Palette spritePalette[2];
+	struct SpriteDescriptor {
+		uint8_t YPositionMinus16	= 0;
+		uint8_t XPositionMinus8		= 0;
+		uint8_t tile				= 0; // 8000-8FFF (256 * 8 * 2)
+		struct {
+			uint8_t palette_banked_unimplemented	: 2 = 0; // Unimplemented
+			uint8_t bank_unimplemented				: 1 = 0; // Unimplemented
+			uint8_t palette			: 1 = 0;
+			bool isHorizontalFlip	: 1 = false;
+			bool isVerticalFlip		: 1 = false;
+			bool isBehind			: 1 = false;
+		};
+	};
+
+	SpriteDescriptor OAM[40];
+
 	struct GPUControl {
 		union {
 			struct {
@@ -72,7 +90,12 @@ private:
 	std::array<uint8_t, 0x8000> ROM;
 	std::array<uint8_t, 0x2000> ERAM;
 	std::array<uint8_t, 0x4000> WRAM;
-	std::array<uint8_t, 0xA0> OAM;
+	//std::array<uint8_t, 0xA0> OAM;
 	std::array<uint8_t, 0x80> ZRAM;
+
+	static_assert (sizeof(MMU::Palette) == 1);
+	static_assert (sizeof(MMU::SpriteDescriptor) == 4);
+	static_assert (sizeof(MMU::GPUControl) == 1);
+	static_assert (sizeof(MMU::InterruptFlags) == 1);
 };
 

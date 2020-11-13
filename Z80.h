@@ -510,5 +510,7 @@ private:
 		uint16_t sp;
 		uint16_t pc;
 	} registers;
+
+	static_assert (sizeof(Registers) == 12);
 };
 

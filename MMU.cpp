@@ -25,6 +25,8 @@ boot_ROM{
 }
 {
 	backgroundPalette.value = 0;
+	spritePalette[0].value = 0;
+	spritePalette[1].value = 0;
 	gpuControl.value = 0;
 	interruptEnable.value = 0;
 	interruptFlags.value = 0;
@@ -98,7 +100,7 @@ uint8_t MMU::read_8(uint16_t address) const
 
 		case 0xE00:
 			if (address < 0xFEA0) {
-				return OAM[address & 0x9F];
+				return ((uint8_t *)OAM)[address - 0xFE00];
 			}
 			else {
 				throw std::logic_error("hhhmm?");
@@ -198,7 +200,7 @@ void MMU::write_8(uint16_t address, uint8_t data)
 
 		case 0xE00:
 			if (address < 0xFEA0) {
-				OAM[address & 0x9F] = data;
+				((uint8_t*)OAM)[address - 0xFE00] = data;
 				return;
 			}
 			else {
@@ -223,6 +225,19 @@ void MMU::write_8(uint16_t address, uint8_t data)
 				case 0xFF0F:
 					interruptFlags.value = data;
 					return;
+
+				case 0xFF11:
+					// Channel 1 Sound length/Wave pattern duty
+					return;
+
+				case 0xFF12:
+					// Channel 1 Volume Envelope
+					return;
+
+				case 0xFF25:
+					// Selection of Sound output terminal
+					return;
+
 				case 0xFF26:
 					// Sound ON/OFF
 					return;
@@ -239,8 +254,24 @@ void MMU::write_8(uint16_t address, uint8_t data)
 					scrollX = data;
 					return;
 
+				case 0xFF46: // OAM DMA
+				{
+					uint16_t dmaAddress = data << 8;
+					for (size_t i = 0; i < 160; i++)
+						write_8(0xFE00 + i, read_8(dmaAddress + i));
+					return;
+				}
+
 				case 0xFF47:
 					backgroundPalette.value = data;
+					return;
+
+				case 0xFF48:
+					spritePalette[0].value = data;
+					return;
+
+				case 0xFF49:
+					spritePalette[1].value = data;
 					return;
 
 				case 0xFF50:

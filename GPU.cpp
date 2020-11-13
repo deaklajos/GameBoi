@@ -97,6 +97,8 @@ void GPU::ScanLine()
 		paletteIndex += (lineLow >> (7 - xOffset)) & 1;
 		paletteIndex += ((lineHigh >> (7 - xOffset)) & 1) << 1;
 
+		lineValues[column] = paletteIndex;
+
 		uint8_t color = 0;
 		switch (paletteIndex)
 		{
@@ -118,5 +120,93 @@ void GPU::ScanLine()
 		}
 
 		display.Update(column, memory.line, color);
+	}
+
+	// TODO render sprites
+	// Remember if bg turned off, then fill lineValues with 0s
+	// only 10 sprites
+	for (const MMU::SpriteDescriptor& spriteDescriptor : memory.OAM)
+	{
+		if (spriteDescriptor.YPositionMinus16 == 0
+			|| spriteDescriptor.YPositionMinus16 >= 160
+			|| spriteDescriptor.XPositionMinus8 == 0	// Dont test this here, X affects 10 sprite cap
+			|| spriteDescriptor.XPositionMinus8 >= 168)	// Dont test this here, X affects 10 sprite cap
+			continue;
+
+		constexpr uint16_t spriteBaseAdress = 0x8000;
+		constexpr uint16_t spriteSizeInBits = 8 * 8 * 2;
+		constexpr uint16_t spriteSizeInBytes = spriteSizeInBits / 8;
+
+		const uint16_t spriteAdress = spriteBaseAdress + spriteDescriptor.tile * spriteSizeInBytes;
+
+		constexpr bool is8x8 = true;
+		if (is8x8) // MADNESS FROM HERE!!!
+		{ // TODO Refactor
+			const int16_t signedSpriteRow = memory.line - (spriteDescriptor.YPositionMinus16 - 16);
+			const bool scanLineHitsSprite = signedSpriteRow < 8 && signedSpriteRow >= 0;
+
+			if (!scanLineHitsSprite) // here count hits!!!
+				continue;
+
+			const uint8_t spriteRow = signedSpriteRow;
+
+			int val = spriteDescriptor.XPositionMinus8 - 8;
+			auto screenfrom = std::clamp(val, 0, 160);
+			auto screento = std::clamp(val + 8, 0, 160);
+			auto count = screento - screenfrom;
+			// if count == 0 out of screen continue
+			auto from = 0;
+			if (val < 0)
+				from = std::abs(val);
+
+			// TODO flip!!!
+			for (uint8_t spriteColumn = from; spriteColumn < from + count; spriteColumn++)
+			{
+				uint16_t spriteRowAdress = spriteAdress + spriteRow * 2;
+
+				// Same code as background!!!
+				// TODO Refactor
+				uint8_t lineLow = memory.read_8(spriteRowAdress);
+				uint8_t lineHigh = memory.read_8(spriteRowAdress + 1);
+
+				uint8_t paletteIndex = 0;
+				paletteIndex += (lineLow >> (7 - spriteColumn)) & 1;
+				paletteIndex += ((lineHigh >> (7 - spriteColumn)) & 1) << 1;
+
+				uint8_t screenColumn = screenfrom + spriteColumn - from;
+
+				if (paletteIndex == 0)
+					continue; // transparent
+
+				if (lineValues[screenColumn] != 0 && spriteDescriptor.isBehind)
+					continue; // behind
+
+				lineValues[screenColumn] = paletteIndex;
+
+				const MMU::Palette& palette = memory.spritePalette[spriteDescriptor.palette];
+
+				uint8_t color = 0;
+				switch (paletteIndex)
+				{
+				case 0:
+					color = memory.COLORS[palette.Color0];
+					break;
+				case 1:
+					color = memory.COLORS[palette.Color1];
+					break;
+				case 2:
+					color = memory.COLORS[palette.Color2];
+					break;
+				case 3:
+					color = memory.COLORS[palette.Color3];
+					break;
+				default:
+					throw std::logic_error("LoGiC ErRoR!");
+					break;
+				}
+
+				display.Update(screenColumn, memory.line, color);
+			}
+		}
 	}
 }

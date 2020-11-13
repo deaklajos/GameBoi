@@ -1764,7 +1764,7 @@ void Z80::DAA(void)
 
 
 // TODO CLEAN UP INSTRUCTION TIMING AND USE T CYCLES!!!
-// instruction table is a modified version of: https://cturt.github.io/cinoop.html
+// instruction names from: https://cturt.github.io/cinoop.html
 Z80::Z80() : instructions({ {
 		{ "NOP",						4,	1,	{.op0 = &Z80::NOP				}},	// 0x00
 		{ "LD BC, 0x%04X",				12,	3,	{.op2 = &Z80::LD_BC_d16			}},	// 0x01
