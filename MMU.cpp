@@ -3,7 +3,12 @@
 #include <fstream>
 #include "Exceptions.h"
 
-JoyPad joypad;
+#include <stdlib.h>
+#include <time.h>   
+
+JoyPad buttonJoypad;
+JoyPad directionJoypad;
+JoyPad* joypad = &buttonJoypad;
 
 // boot ROM  from: https://gbdev.gg8.se/wiki/articles/Gameboy_Bootstrap_ROM
 MMU::MMU(const uint16_t& pc) :pc{ pc },
@@ -45,6 +50,8 @@ boot_ROM{
 	}
 	else
 		throw std::logic_error("File open error!");
+
+	srand(time(NULL));
 }
 
 MMU::~MMU()
@@ -122,7 +129,9 @@ uint8_t MMU::read_8(uint16_t address) const
 				switch (address)
 				{
 				case 0xFF00: // gamepad
-					return joypad.value;
+					return joypad->value;
+				case 0xFF04: // DIV, random hack
+					return (uint8_t)rand();
 				case 0xFF0F:
 					return interruptFlags.value;
 				case 0xFF40:
@@ -224,6 +233,18 @@ void MMU::write_8(uint16_t address, uint8_t data)
 				// I/O
 				switch (address)
 				{
+				case 0xFF00: // gamepad
+				{
+					JoyPad pad;
+					pad.value = data;
+					if (pad.notSelectedButton)
+						joypad = &directionJoypad;
+					else
+						joypad = &buttonJoypad;
+
+					return;
+				}
+				
 				case 0xFF0F:
 					interruptFlags.value = data;
 					return;

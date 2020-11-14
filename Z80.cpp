@@ -694,7 +694,7 @@ void Z80::RES_0_E(void) { res0(registers.e); }
 void Z80::RES_0_H(void) { res0(registers.h); }
 void Z80::RES_0_L(void) { res0(registers.l); }
 void Z80::RES_0_A(void) { res0(registers.a); }
-					    
+
 void Z80::RES_1_B(void) { res1(registers.b); }
 void Z80::RES_1_C(void) { res1(registers.c); }
 void Z80::RES_1_D(void) { res1(registers.d); }
@@ -702,7 +702,7 @@ void Z80::RES_1_E(void) { res1(registers.e); }
 void Z80::RES_1_H(void) { res1(registers.h); }
 void Z80::RES_1_L(void) { res1(registers.l); }
 void Z80::RES_1_A(void) { res1(registers.a); }
-					    
+
 void Z80::RES_2_B(void) { res2(registers.b); }
 void Z80::RES_2_C(void) { res2(registers.c); }
 void Z80::RES_2_D(void) { res2(registers.d); }
@@ -710,7 +710,7 @@ void Z80::RES_2_E(void) { res2(registers.e); }
 void Z80::RES_2_H(void) { res2(registers.h); }
 void Z80::RES_2_L(void) { res2(registers.l); }
 void Z80::RES_2_A(void) { res2(registers.a); }
-					    
+
 void Z80::RES_3_B(void) { res3(registers.b); }
 void Z80::RES_3_C(void) { res3(registers.c); }
 void Z80::RES_3_D(void) { res3(registers.d); }
@@ -718,7 +718,7 @@ void Z80::RES_3_E(void) { res3(registers.e); }
 void Z80::RES_3_H(void) { res3(registers.h); }
 void Z80::RES_3_L(void) { res3(registers.l); }
 void Z80::RES_3_A(void) { res3(registers.a); }
-					    
+
 void Z80::RES_4_B(void) { res4(registers.b); }
 void Z80::RES_4_C(void) { res4(registers.c); }
 void Z80::RES_4_D(void) { res4(registers.d); }
@@ -726,7 +726,7 @@ void Z80::RES_4_E(void) { res4(registers.e); }
 void Z80::RES_4_H(void) { res4(registers.h); }
 void Z80::RES_4_L(void) { res4(registers.l); }
 void Z80::RES_4_A(void) { res4(registers.a); }
-					    
+
 void Z80::RES_5_B(void) { res5(registers.b); }
 void Z80::RES_5_C(void) { res5(registers.c); }
 void Z80::RES_5_D(void) { res5(registers.d); }
@@ -734,7 +734,7 @@ void Z80::RES_5_E(void) { res5(registers.e); }
 void Z80::RES_5_H(void) { res5(registers.h); }
 void Z80::RES_5_L(void) { res5(registers.l); }
 void Z80::RES_5_A(void) { res5(registers.a); }
-					    
+
 void Z80::RES_6_B(void) { res6(registers.b); }
 void Z80::RES_6_C(void) { res6(registers.c); }
 void Z80::RES_6_D(void) { res6(registers.d); }
@@ -742,7 +742,7 @@ void Z80::RES_6_E(void) { res6(registers.e); }
 void Z80::RES_6_H(void) { res6(registers.h); }
 void Z80::RES_6_L(void) { res6(registers.l); }
 void Z80::RES_6_A(void) { res6(registers.a); }
-					    
+
 void Z80::RES_7_B(void) { res7(registers.b); }
 void Z80::RES_7_C(void) { res7(registers.c); }
 void Z80::RES_7_D(void) { res7(registers.d); }
@@ -796,6 +796,131 @@ void Z80::RES_6_HLa(void) {
 void Z80::RES_7_HLa(void) {
 	uint8_t value = memory.read_8(registers.hl);
 	res7(value);
+	memory.write_8(registers.hl, value);
+}
+
+inline void Z80::set(uint8_t bitMask, uint8_t& value) {
+	value |= bitMask;
+}
+
+inline void Z80::set0(uint8_t& value) { set(1, value); }
+inline void Z80::set1(uint8_t& value) { set((1 << 1), value); }
+inline void Z80::set2(uint8_t& value) { set((1 << 2), value); }
+inline void Z80::set3(uint8_t& value) { set((1 << 3), value); }
+inline void Z80::set4(uint8_t& value) { set((1 << 4), value); }
+inline void Z80::set5(uint8_t& value) { set((1 << 5), value); }
+inline void Z80::set6(uint8_t& value) { set((1 << 6), value); }
+inline void Z80::set7(uint8_t& value) { set((1 << 7), value); }
+
+void Z80::SET_0_B(void) { set0(registers.b); }
+void Z80::SET_0_C(void) { set0(registers.c); }
+void Z80::SET_0_D(void) { set0(registers.d); }
+void Z80::SET_0_E(void) { set0(registers.e); }
+void Z80::SET_0_H(void) { set0(registers.h); }
+void Z80::SET_0_L(void) { set0(registers.l); }
+void Z80::SET_0_A(void) { set0(registers.a); }
+
+void Z80::SET_1_B(void) { set1(registers.b); }
+void Z80::SET_1_C(void) { set1(registers.c); }
+void Z80::SET_1_D(void) { set1(registers.d); }
+void Z80::SET_1_E(void) { set1(registers.e); }
+void Z80::SET_1_H(void) { set1(registers.h); }
+void Z80::SET_1_L(void) { set1(registers.l); }
+void Z80::SET_1_A(void) { set1(registers.a); }
+
+void Z80::SET_2_B(void) { set2(registers.b); }
+void Z80::SET_2_C(void) { set2(registers.c); }
+void Z80::SET_2_D(void) { set2(registers.d); }
+void Z80::SET_2_E(void) { set2(registers.e); }
+void Z80::SET_2_H(void) { set2(registers.h); }
+void Z80::SET_2_L(void) { set2(registers.l); }
+void Z80::SET_2_A(void) { set2(registers.a); }
+
+void Z80::SET_3_B(void) { set3(registers.b); }
+void Z80::SET_3_C(void) { set3(registers.c); }
+void Z80::SET_3_D(void) { set3(registers.d); }
+void Z80::SET_3_E(void) { set3(registers.e); }
+void Z80::SET_3_H(void) { set3(registers.h); }
+void Z80::SET_3_L(void) { set3(registers.l); }
+void Z80::SET_3_A(void) { set3(registers.a); }
+
+void Z80::SET_4_B(void) { set4(registers.b); }
+void Z80::SET_4_C(void) { set4(registers.c); }
+void Z80::SET_4_D(void) { set4(registers.d); }
+void Z80::SET_4_E(void) { set4(registers.e); }
+void Z80::SET_4_H(void) { set4(registers.h); }
+void Z80::SET_4_L(void) { set4(registers.l); }
+void Z80::SET_4_A(void) { set4(registers.a); }
+
+void Z80::SET_5_B(void) { set5(registers.b); }
+void Z80::SET_5_C(void) { set5(registers.c); }
+void Z80::SET_5_D(void) { set5(registers.d); }
+void Z80::SET_5_E(void) { set5(registers.e); }
+void Z80::SET_5_H(void) { set5(registers.h); }
+void Z80::SET_5_L(void) { set5(registers.l); }
+void Z80::SET_5_A(void) { set5(registers.a); }
+
+void Z80::SET_6_B(void) { set6(registers.b); }
+void Z80::SET_6_C(void) { set6(registers.c); }
+void Z80::SET_6_D(void) { set6(registers.d); }
+void Z80::SET_6_E(void) { set6(registers.e); }
+void Z80::SET_6_H(void) { set6(registers.h); }
+void Z80::SET_6_L(void) { set6(registers.l); }
+void Z80::SET_6_A(void) { set6(registers.a); }
+
+void Z80::SET_7_B(void) { set7(registers.b); }
+void Z80::SET_7_C(void) { set7(registers.c); }
+void Z80::SET_7_D(void) { set7(registers.d); }
+void Z80::SET_7_E(void) { set7(registers.e); }
+void Z80::SET_7_H(void) { set7(registers.h); }
+void Z80::SET_7_L(void) { set7(registers.l); }
+void Z80::SET_7_A(void) { set7(registers.a); }
+
+void Z80::SET_0_HLa(void) {
+	uint8_t value = memory.read_8(registers.hl);
+	set0(value);
+	memory.write_8(registers.hl, value);
+}
+
+void Z80::SET_1_HLa(void) {
+	uint8_t value = memory.read_8(registers.hl);
+	set1(value);
+	memory.write_8(registers.hl, value);
+}
+
+void Z80::SET_2_HLa(void) {
+	uint8_t value = memory.read_8(registers.hl);
+	set2(value);
+	memory.write_8(registers.hl, value);
+}
+
+void Z80::SET_3_HLa(void) {
+	uint8_t value = memory.read_8(registers.hl);
+	set3(value);
+	memory.write_8(registers.hl, value);
+}
+
+void Z80::SET_4_HLa(void) {
+	uint8_t value = memory.read_8(registers.hl);
+	set4(value);
+	memory.write_8(registers.hl, value);
+}
+
+void Z80::SET_5_HLa(void) {
+	uint8_t value = memory.read_8(registers.hl);
+	set5(value);
+	memory.write_8(registers.hl, value);
+}
+
+void Z80::SET_6_HLa(void) {
+	uint8_t value = memory.read_8(registers.hl);
+	set6(value);
+	memory.write_8(registers.hl, value);
+}
+
+void Z80::SET_7_HLa(void) {
+	uint8_t value = memory.read_8(registers.hl);
+	set7(value);
 	memory.write_8(registers.hl, value);
 }
 
@@ -2221,70 +2346,70 @@ Z80::Z80() : instructions({ {
 		{ "RES7 L",		8,	&Z80::RES_7_L			},	// 0xbd
 		{ "RES7 (HL)",	16,	&Z80::RES_7_HLa			},	// 0xbe
 		{ "RES7 A",		8,	&Z80::RES_7_A			},	// 0xbf
-		{ "SET0 B",		8,	&Z80::unimplemented_op0 },	// 0xc0
-		{ "SET0 C",		8,	&Z80::unimplemented_op0 },	// 0xc1
-		{ "SET0 D",		8,	&Z80::unimplemented_op0 },	// 0xc2
-		{ "SET0 E",		8,	&Z80::unimplemented_op0 },	// 0xc3
-		{ "SET0 H",		8,	&Z80::unimplemented_op0 },	// 0xc4
-		{ "SET0 L",		8,	&Z80::unimplemented_op0 },	// 0xc5
-		{ "SET0 (HL)",	16,	&Z80::unimplemented_op0 },	// 0xc6
-		{ "SET0 A",		8,	&Z80::unimplemented_op0 },	// 0xc7
-		{ "SET1 B",		8,	&Z80::unimplemented_op0 },	// 0xc8
-		{ "SET1 C",		8,	&Z80::unimplemented_op0 },	// 0xc9
-		{ "SET1 D",		8,	&Z80::unimplemented_op0 },	// 0xca
-		{ "SET1 E",		8,	&Z80::unimplemented_op0 },	// 0xcb
-		{ "SET1 H",		8,	&Z80::unimplemented_op0 },	// 0xcc
-		{ "SET1 L",		8,	&Z80::unimplemented_op0 },	// 0xcd
-		{ "SET1 (HL)",	16,	&Z80::unimplemented_op0 },	// 0xce
-		{ "SET1 A",		8,	&Z80::unimplemented_op0 },	// 0xcf
-		{ "SET2 B",		8,	&Z80::unimplemented_op0 },	// 0xd0
-		{ "SET2 C",		8,	&Z80::unimplemented_op0 },	// 0xd1
-		{ "SET2 D",		8,	&Z80::unimplemented_op0 },	// 0xd2
-		{ "SET2 E",		8,	&Z80::unimplemented_op0 },	// 0xd3
-		{ "SET2 H",		8,	&Z80::unimplemented_op0 },	// 0xd4
-		{ "SET2 L",		8,	&Z80::unimplemented_op0 },	// 0xd5
-		{ "SET2 (HL)",	16,	&Z80::unimplemented_op0 },	// 0xd6
-		{ "SET2 A",		8,	&Z80::unimplemented_op0 },	// 0xd7
-		{ "SET3 B",		8,	&Z80::unimplemented_op0 },	// 0xd8
-		{ "SET3 C",		8,	&Z80::unimplemented_op0 },	// 0xd9
-		{ "SET3 D",		8,	&Z80::unimplemented_op0 },	// 0xda
-		{ "SET3 E",		8,	&Z80::unimplemented_op0 },	// 0xdb
-		{ "SET3 H",		8,	&Z80::unimplemented_op0 },	// 0xdc
-		{ "SET3 L",		8,	&Z80::unimplemented_op0 },	// 0xdd
-		{ "SET3 (HL)",	16,	&Z80::unimplemented_op0 },	// 0xde
-		{ "SET3 A",		8,	&Z80::unimplemented_op0 },	// 0xdf
-		{ "SET4 B",		8,	&Z80::unimplemented_op0 },	// 0xe0
-		{ "SET4 C",		8,	&Z80::unimplemented_op0 },	// 0xe1
-		{ "SET4 D",		8,	&Z80::unimplemented_op0 },	// 0xe2
-		{ "SET4 E",		8,	&Z80::unimplemented_op0 },	// 0xe3
-		{ "SET4 H",		8,	&Z80::unimplemented_op0 },	// 0xe4
-		{ "SET4 L",		8,	&Z80::unimplemented_op0 },	// 0xe5
-		{ "SET4 (HL)",	16,	&Z80::unimplemented_op0 },	// 0xe6
-		{ "SET4 A",		8,	&Z80::unimplemented_op0 },	// 0xe7
-		{ "SET5 B",		8,	&Z80::unimplemented_op0 },	// 0xe8
-		{ "SET5 C",		8,	&Z80::unimplemented_op0 },	// 0xe9
-		{ "SET5 D",		8,	&Z80::unimplemented_op0 },	// 0xea
-		{ "SET5 E",		8,	&Z80::unimplemented_op0 },	// 0xeb
-		{ "SET5 H",		8,	&Z80::unimplemented_op0 },	// 0xec
-		{ "SET5 L",		8,	&Z80::unimplemented_op0 },	// 0xed
-		{ "SET5 (HL)",	16,	&Z80::unimplemented_op0 },	// 0xee
-		{ "SET5 A",		8,	&Z80::unimplemented_op0 },	// 0xef
-		{ "SET6 B",		8,	&Z80::unimplemented_op0 },	// 0xf0
-		{ "SET6 C",		8,	&Z80::unimplemented_op0 },	// 0xf1
-		{ "SET6 D",		8,	&Z80::unimplemented_op0 },	// 0xf2
-		{ "SET6 E",		8,	&Z80::unimplemented_op0 },	// 0xf3
-		{ "SET6 H",		8,	&Z80::unimplemented_op0 },	// 0xf4
-		{ "SET6 L",		8,	&Z80::unimplemented_op0 },	// 0xf5
-		{ "SET6 (HL)",	16,	&Z80::unimplemented_op0 },	// 0xf6
-		{ "SET6 A",		8,	&Z80::unimplemented_op0 },	// 0xf7
-		{ "SET7 B",		8,	&Z80::unimplemented_op0 },	// 0xf8
-		{ "SET7 C",		8,	&Z80::unimplemented_op0 },	// 0xf9
-		{ "SET7 D",		8,	&Z80::unimplemented_op0 },	// 0xfa
-		{ "SET7 E",		8,	&Z80::unimplemented_op0 },	// 0xfb
-		{ "SET7 H",		8,	&Z80::unimplemented_op0 },	// 0xfc
-		{ "SET7 L",		8,	&Z80::unimplemented_op0 },	// 0xfd
-		{ "SET7 (HL)",	16,	&Z80::unimplemented_op0 },	// 0xfe
-		{ "SET7 A",		8,	&Z80::unimplemented_op0 }	// 0xff
+		{ "SET0 B",		8,	&Z80::SET_0_B			},	// 0xc0
+		{ "SET0 C",		8,	&Z80::SET_0_C			},	// 0xc1
+		{ "SET0 D",		8,	&Z80::SET_0_D			},	// 0xc2
+		{ "SET0 E",		8,	&Z80::SET_0_E			},	// 0xc3
+		{ "SET0 H",		8,	&Z80::SET_0_H			},	// 0xc4
+		{ "SET0 L",		8,	&Z80::SET_0_L			},	// 0xc5
+		{ "SET0 (HL)",	16,	&Z80::SET_0_HLa			},	// 0xc6
+		{ "SET0 A",		8,	&Z80::SET_0_A			},	// 0xc7
+		{ "SET1 B",		8,	&Z80::SET_1_B			},	// 0xc8
+		{ "SET1 C",		8,	&Z80::SET_1_C			},	// 0xc9
+		{ "SET1 D",		8,	&Z80::SET_1_D			},	// 0xca
+		{ "SET1 E",		8,	&Z80::SET_1_E			},	// 0xcb
+		{ "SET1 H",		8,	&Z80::SET_1_H			},	// 0xcc
+		{ "SET1 L",		8,	&Z80::SET_1_L			},	// 0xcd
+		{ "SET1 (HL)",	16,	&Z80::SET_1_HLa			},	// 0xce
+		{ "SET1 A",		8,	&Z80::SET_1_A			},	// 0xcf
+		{ "SET2 B",		8,	&Z80::SET_2_B			},	// 0xd0
+		{ "SET2 C",		8,	&Z80::SET_2_C			},	// 0xd1
+		{ "SET2 D",		8,	&Z80::SET_2_D			},	// 0xd2
+		{ "SET2 E",		8,	&Z80::SET_2_E			},	// 0xd3
+		{ "SET2 H",		8,	&Z80::SET_2_H			},	// 0xd4
+		{ "SET2 L",		8,	&Z80::SET_2_L			},	// 0xd5
+		{ "SET2 (HL)",	16,	&Z80::SET_2_HLa			},	// 0xd6
+		{ "SET2 A",		8,	&Z80::SET_2_A			},	// 0xd7
+		{ "SET3 B",		8,	&Z80::SET_3_B			},	// 0xd8
+		{ "SET3 C",		8,	&Z80::SET_3_C			},	// 0xd9
+		{ "SET3 D",		8,	&Z80::SET_3_D			},	// 0xda
+		{ "SET3 E",		8,	&Z80::SET_3_E			},	// 0xdb
+		{ "SET3 H",		8,	&Z80::SET_3_H			},	// 0xdc
+		{ "SET3 L",		8,	&Z80::SET_3_L			},	// 0xdd
+		{ "SET3 (HL)",	16,	&Z80::SET_3_HLa			},	// 0xde
+		{ "SET3 A",		8,	&Z80::SET_3_A			},	// 0xdf
+		{ "SET4 B",		8,	&Z80::SET_4_B			},	// 0xe0
+		{ "SET4 C",		8,	&Z80::SET_4_C			},	// 0xe1
+		{ "SET4 D",		8,	&Z80::SET_4_D			},	// 0xe2
+		{ "SET4 E",		8,	&Z80::SET_4_E			},	// 0xe3
+		{ "SET4 H",		8,	&Z80::SET_4_H			},	// 0xe4
+		{ "SET4 L",		8,	&Z80::SET_4_L			},	// 0xe5
+		{ "SET4 (HL)",	16,	&Z80::SET_4_HLa			},	// 0xe6
+		{ "SET4 A",		8,	&Z80::SET_4_A			},	// 0xe7
+		{ "SET5 B",		8,	&Z80::SET_5_B			},	// 0xe8
+		{ "SET5 C",		8,	&Z80::SET_5_C			},	// 0xe9
+		{ "SET5 D",		8,	&Z80::SET_5_D			},	// 0xea
+		{ "SET5 E",		8,	&Z80::SET_5_E			},	// 0xeb
+		{ "SET5 H",		8,	&Z80::SET_5_H			},	// 0xec
+		{ "SET5 L",		8,	&Z80::SET_5_L			},	// 0xed
+		{ "SET5 (HL)",	16,	&Z80::SET_5_HLa			},	// 0xee
+		{ "SET5 A",		8,	&Z80::SET_5_A			},	// 0xef
+		{ "SET6 B",		8,	&Z80::SET_6_B			},	// 0xf0
+		{ "SET6 C",		8,	&Z80::SET_6_C			},	// 0xf1
+		{ "SET6 D",		8,	&Z80::SET_6_D			},	// 0xf2
+		{ "SET6 E",		8,	&Z80::SET_6_E			},	// 0xf3
+		{ "SET6 H",		8,	&Z80::SET_6_H			},	// 0xf4
+		{ "SET6 L",		8,	&Z80::SET_6_L			},	// 0xf5
+		{ "SET6 (HL)",	16,	&Z80::SET_6_HLa			},	// 0xf6
+		{ "SET6 A",		8,	&Z80::SET_6_A			},	// 0xf7
+		{ "SET7 B",		8,	&Z80::SET_7_B			},	// 0xf8
+		{ "SET7 C",		8,	&Z80::SET_7_C			},	// 0xf9
+		{ "SET7 D",		8,	&Z80::SET_7_D			},	// 0xfa
+		{ "SET7 E",		8,	&Z80::SET_7_E			},	// 0xfb
+		{ "SET7 H",		8,	&Z80::SET_7_H			},	// 0xfc
+		{ "SET7 L",		8,	&Z80::SET_7_L			},	// 0xfd
+		{ "SET7 (HL)",	16,	&Z80::SET_7_HLa			},	// 0xfe
+		{ "SET7 A",		8,	&Z80::SET_7_A			}	// 0xff
 	} }),
 	memory(registers.pc),
 	gpu(cycles, memory)

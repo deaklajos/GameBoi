@@ -21,57 +21,39 @@ LRESULT CALLBACK mySubClassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	bool isKeyDown = uMsg == WM_KEYDOWN;
 	bool isKeyUp = uMsg == WM_KEYUP;
 
-	// only one key for now
 	if (isKeyDown || isKeyUp)
 	{
-		JoyPad newval;
 		switch (wParam) {
 		case VK_UP:
-			newval.notPressedUpOrSelect = isKeyUp;
-			newval.notSelectedDirection = isKeyUp;
-			joypad = newval;
+			directionJoypad.notPressedUpOrSelect = isKeyUp;
 			break;
 
 		case VK_DOWN:
-			newval.notPressedDownOrStart = isKeyUp;
-			newval.notSelectedDirection = isKeyUp;
-			joypad = newval;
+			directionJoypad.notPressedDownOrStart = isKeyUp;
 			break;
 
 		case VK_LEFT:
-			newval.notPressedLeftOrB = isKeyUp;
-			newval.notSelectedDirection = isKeyUp;
-			joypad = newval;
+			directionJoypad.notPressedLeftOrB = isKeyUp;
 			break;
 
 		case VK_RIGHT:
-			newval.notPressedRightOrA = isKeyUp;
-			newval.notSelectedDirection = isKeyUp;
-			joypad = newval;
+			directionJoypad.notPressedRightOrA = isKeyUp;
 			break;
 
 		case 'M':
-			newval.notPressedUpOrSelect = isKeyUp;
-			newval.notSelectedButton = isKeyUp;
-			joypad = newval;
+			buttonJoypad.notPressedUpOrSelect = isKeyUp;
 			break;
 
 		case 'N':
-			newval.notPressedDownOrStart = isKeyUp;
-			newval.notSelectedButton = isKeyUp;
-			joypad = newval;
+			buttonJoypad.notPressedDownOrStart = isKeyUp;
 			break;
 
 		case 'Q':
-			newval.notPressedRightOrA = isKeyUp;
-			newval.notSelectedButton = isKeyUp;
-			joypad = newval;
+			buttonJoypad.notPressedRightOrA = isKeyUp;
 			break;
 
 		case 'W':
-			newval.notPressedLeftOrB = isKeyUp;
-			newval.notSelectedButton = isKeyUp;
-			joypad = newval;
+			buttonJoypad.notPressedLeftOrB = isKeyUp;
 			break;
 		}
 	}

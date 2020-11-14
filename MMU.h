@@ -18,7 +18,9 @@ struct JoyPad {
 	};
 };
 
-extern JoyPad joypad; // nonono
+extern JoyPad buttonJoypad; // nonono
+extern JoyPad directionJoypad; // nonono
+extern JoyPad* joypad; // nonono
 
 class MMU
 {
