@@ -1034,6 +1034,11 @@ void Z80::XOR_A(void)
 	xor_(registers.a);
 }
 
+void Z80::XOR_d8(uint8_t value)
+{
+	xor_(value);
+}
+
 inline void Z80::or_(uint8_t value)
 {
 	registers.a |= value;
@@ -2004,7 +2009,7 @@ Z80::Z80() : instructions({ {
 		{ "UNKNOWN",					0,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xeb
 		{ "UNKNOWN",					0,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xec
 		{ "UNKNOWN",					0,	1,	{.op0 = &Z80::unimplemented_op0 }},	// 0xed
-		{ "XOR 0x%02X",					4,	2,	{.op1 = &Z80::unimplemented_op1 }},	// 0xee
+		{ "XOR 0x%02X",					8,	2,	{.op1 = &Z80::XOR_d8			}},	// 0xee
 		{ "RST 0x28",					16,	1,	{.op0 = &Z80::RST_0x0028		}},	// 0xef
 		{ "LD A, (0xFF00 + 0x%02X)",	12,	2,	{.op1 = &Z80::LD_FF_A_a8		}},	// 0xf0
 		{ "POP AF",						12,	1,	{.op0 = &Z80::POP_AF			}},	// 0xf1

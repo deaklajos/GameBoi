@@ -321,6 +321,7 @@ private:
 	void XOR_L(void);
 	void XOR_HLa(void);
 	void XOR_A(void);
+	void XOR_d8(uint8_t value);
 	inline void or_(uint8_t value);
 	void OR_B(void);
 	void OR_C(void);

@@ -3,6 +3,8 @@
 #include <fstream>
 #include "Exceptions.h"
 
+JoyPad joypad;
+
 // boot ROM  from: https://gbdev.gg8.se/wiki/articles/Gameboy_Bootstrap_ROM
 MMU::MMU(const uint16_t& pc) :pc{ pc },
 boot_ROM{
@@ -120,7 +122,7 @@ uint8_t MMU::read_8(uint16_t address) const
 				switch (address)
 				{
 				case 0xFF00: // gamepad
-					return 0b00101111;
+					return joypad.value;
 				case 0xFF0F:
 					return interruptFlags.value;
 				case 0xFF40:

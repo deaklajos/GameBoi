@@ -3,6 +3,23 @@
 #include <cstdint>
 #include <array>
 
+struct JoyPad {
+	union {
+		struct {
+			bool notPressedRightOrA : 1;
+			bool notPressedLeftOrB : 1;
+			bool notPressedUpOrSelect : 1;
+			bool notPressedDownOrStart : 1;
+			bool notSelectedDirection : 1;
+			bool notSelectedButton : 1;
+			uint8_t : 2;
+		};
+		uint8_t value = 0xFF;
+	};
+};
+
+extern JoyPad joypad; // nonono
+
 class MMU
 {
 public:
