@@ -1,3 +1,5 @@
+#define NOMINMAX
+
 #include "Display.h"
 
 #include <opencv2/highgui.hpp>
@@ -9,6 +11,7 @@
 #include <CommCtrl.h>
 
 #include <iostream>
+#include <chrono>
 
 #include "MMU.h"
 
@@ -69,10 +72,19 @@ Display::Display() : frameBuffer(cv::Mat::zeros(HEIGHT, WIDTH, CV_8UC1))
 }
 
 void Display::Show() {
+	static auto start = std::chrono::high_resolution_clock::now();
+	auto end = std::chrono::high_resolution_clock::now();
+	std::chrono::duration<double> diff = end - start;
+
+	start = end;
+
+	double msecspassed = diff.count() * 1000.0;
+	int msecs_to_wait = (int)std::min(std::max(msecspassed, 1.0), 16.0);
+
 	cv::Mat resized;
 	cv::resize(frameBuffer, resized, {}, 4, 4, cv::INTER_NEAREST);
 	cv::imshow(NAME, resized);
-	/*char key = static_cast<char>(*/cv::waitKey(1)/*)*/;
+	/*char key = static_cast<char>(*/cv::waitKey(msecs_to_wait)/*)*/;
 	//if (key == 27) { std::cout << "Exiting..." << std::endl; break; }
 }
 
